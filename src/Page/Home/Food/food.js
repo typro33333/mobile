@@ -13,6 +13,7 @@ import { useNavigation } from '@react-navigation/native';
 import Swiper from 'react-native-swiper';
 import { FlatList } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { Entypo } from '@expo/vector-icons'; 
 
 const wait = (timeout) => {
   return new Promise(resolve => {
@@ -49,29 +50,35 @@ const Food = () =>  {
 
   const Card = ({item,index}) => {
     return(
-      <View style = {styles.containerCardfood}>
-            <View style = {{flexDirection:'row',width:260}}>
+            <View style = {{flex:1,
+            flexDirection:'row',
+            width:"90%",
+            alignSelf:'center',
+            marginTop:10,
+            backgroundColor:"#FFF",
+            borderRadius:8
+            }}>
               <Image 
               key = {index}
               source= {item.image}
               resizeMode ="cover"
               style = {styles.cardImage}
               />
-              <Text style ={styles.txtCard}>
+              <View style = {{flex:1,flexDirection:'collum',marginLeft:8}}>
                 <TouchableOpacity 
                 onPress = {() => navigation.navigate('Detail')}
+                style = {{flexDirection:'row',width:"100%"}}
                 >
                   <Text style = {styles.titleCard}>
                   {item.titleCard}
                   </Text>
                 </TouchableOpacity>
+                <Entypo name="star" size={18} color="#FDCC0D"/>
                 <Text>
-                {"\n"}
                 {item.content}
                 </Text>
-              </Text>
+              </View>
             </View>
-      </View>
     )
   }
 
@@ -108,7 +115,7 @@ const Food = () =>  {
         <View style={styles.categoryContainer}>
           <TouchableOpacity 
           style={styles.categoryBtn} 
-          onPress = {()=> navigation.navigate('Detail')}>
+          onPress = {()=> navigation.navigate('ListFood')}>
             <View style={styles.categoryIcon}>
               <Image 
               source ={require('../../../../assets/food.png')}
@@ -207,20 +214,23 @@ const data = [
 {
   id:1,
   image:require('../../../../assets/image_1.jpg'), 
-  titleCard:'Tiramisu, Italy', 
-  content: 'Tiramisu là loại bánh ngọt tráng miệng vị cà phê rất nổi tiếng của Italy bột cacao...'
+  titleCard:'Tiramisu', 
+  content: 'Tiramisu là loại bánh ngọt tráng miệng vị cà phê rất nổi tiếng của Italy bột cacao...',
+  rating:3.4
 },
 {
   id:2,
   image:require('../../../../assets/image_5.jpg'), 
-  titleCard:'Coffee Cake, American', 
-  content: 'Coffee Cake là loại bánh ngọt tráng miệng vị cà phê rất nổi tiếng của American bột cacao...'
+  titleCard:'Coffee Cake', 
+  content: 'Coffee Cake là loại bánh ngọt tráng miệng vị cà phê rất nổi tiếng của American bột cacao...',
+  rating:4.4
 },
 {
   id:3,
   image:require('../../../../assets/image_4.jpg'), 
-  titleCard:'Phở, Việt Nam', 
-  content: '- Phở or pho is a Vietnamese soup consisting of broth, rice noodles, herbs, and meat.'
+  titleCard:'Phở', 
+  content: '- Phở or pho is a Vietnamese soup consisting of broth, rice noodles, herbs, and meat.',
+  rating:2.7
 }
 ];
 
@@ -286,8 +296,9 @@ const styles = StyleSheet.create({
     height:40,
   },
   containerToprecent:{
+    alignSelf:'center',
+    width:"90%",
     marginTop:15,
-    marginLeft:30
   },
   txtrecent:{
     fontSize:28,
@@ -295,11 +306,8 @@ const styles = StyleSheet.create({
     fontFamily:"Cochin"
   },
   containerCardfood:{
-    flexDirection:'column',
     justifyContent:'center',
     alignSelf:'center',
-    width:'90%',
-    height:110,
     marginTop:10,
   },
   cardImage:{
@@ -311,9 +319,8 @@ const styles = StyleSheet.create({
   txtCard:{
     marginLeft:14,
     marginTop:8,
-    width:'85%',
     justifyContent:'center',
-    alignSelf:'center'
+    alignSelf:'center',
   },
   titleCard:{
     fontFamily:'Cochin',

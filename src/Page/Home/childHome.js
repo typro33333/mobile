@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import Food from './Food/food';
+import ListFood from './Food/listfood';
 import Detail from './detail';
 import Order from './order';
 import {Text, View} from 'react-native';
@@ -38,6 +39,7 @@ return(
                     />
                 </View>
             ),
+            animationEnabled:true
         }}
         />
         <Stack.Screen 
@@ -47,7 +49,7 @@ return(
             animationEnabled:false,
         }}
         />
-
+        <Stack.Screen name = "ListFood" component = {ListFood}/>
         <Stack.Screen name = "Detail" component = {Detail}/>
         <Stack.Screen name = "Order" component = {Order} /> 
     </Stack.Navigator>
