@@ -12,9 +12,9 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { LogBox } from 'react-native';
-
+import {rating} from '../../../Component/Star_rating/star';
 const SearchScreen = () => {
-    LogBox.ignoreAllLogs();
+    
     const navigation = useNavigation();
     const [value,setValue] = React.useState('');
     const [currentData,setCurrentData] = React.useState(data)
@@ -25,15 +25,12 @@ const SearchScreen = () => {
         })
     }
     useEffect(()=>{
+        LogBox.ignoreAllLogs();
         navigation.setOptions({
             title:'',
             headerLeft: () => (
                     <View style ={{flex:1,flexDirection:'row'}}>
-                        <TouchableOpacity
-                        onPress = {()=> navigation.goBack(
-
-                        )}
-                        >
+                        <TouchableOpacity onPress = {()=> navigation.goBack()}>
                             <Text
                             style ={{color:'#6200EE',marginLeft:14,marginTop:12}}
                             >Cancel</Text>
@@ -76,33 +73,21 @@ const SearchScreen = () => {
 
       const Items = ({item,index}) => {
         return(
-            <View style ={{
-            marginTop:10,
-            justifyContent:'center',
-            alignSelf:'center',
-            width:"90%",
-            shadowColor: "#000",
-            shadowOffset: {
-                width: 0,
-                height: 2,
-            },
-            shadowOpacity: 0.25,
-            shadowRadius: 3.84,
-            elevation: 7,}}>
+            <View style ={styles.Containerlist}>
                 <TouchableOpacity 
                 key ={index}
-                style = {{flexDirection:'row',width:"100%",backgroundColor: '#FFFFFF'}}
+                style = {{flexDirection:'row',width:"100%"}}
                 >
                     <Image 
                     source = {item.image}
                     resizeMode="cover"
-                    style = {{width:50,height:50}}
+                    style = {{width:60,height:60}}
                     />
-                    <Text style = {{paddingLeft:10,paddingTop:6}}>
+                    <View style = {{paddingLeft:10,paddingTop:6,flexDirection:'column'}}>
                         <Text>{item.title}</Text>
-                        <Text>{"\n"}{item.content}</Text>
-                    </Text>
-
+                        {rating(item.rating)}
+                        <Text>{item.content}</Text>
+                    </View>
                 </TouchableOpacity>
             </View>
         )
@@ -141,20 +126,35 @@ const styles = StyleSheet.create({
     },
     isSearch:{
         marginTop:16,
+    },
+    Containerlist:{
+        marginTop:10,
+        justifyContent:'center',
+        alignSelf:'center',
+        width:"90%",
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0.75,
+            height: 2,
+        },
+        shadowOpacity: 0.5,
+        shadowRadius: 3.75,
+        elevation: 7,
+        backgroundColor:"#fff"
     }
 })
 
 const data = [
-    {id:1,title:'Cake',content:'Bánh ngọt',image:require('../../../../assets/image_1.jpg'),stylefood:'restaurent'},
-    {id:2,title:'Scone',content:'Bánh Mặn',image:require('../../../../assets/image_2.jpg'),stylefood:'restaurent'},
-    {id:3,title:'Fritters',content:'Bánh ngọt',image:require('../../../../assets/image_3.jpg'),stylefood:'restaurent'},
-    {id:4,title:'Cupcake',content:'Bánh ngọt',image:require('../../../../assets/image_4.jpg'),stylefood:'restaurent'},
-    {id:5,title:'Coffee cake',content:'Bánh Mặn',image:require('../../../../assets/image_5.jpg'),stylefood:'restaurent'},
-    {id:6,title:'Cake Donut',content:'Bánh ngọt',image:require('../../../../assets/image_6.jpg'),stylefood:'restaurent'},
-    {id:7,title:'Mousse',content:'Bánh Mặn',image:require('../../../../assets/image_7.jpg'),stylefood:'restaurent'},
-    {id:8,title:'Banh Pie',content:'Bánh Mặn',image:require('../../../../assets/image_8.jpg'),stylefood:'restaurent'},
-    {id:9,title:'Cheesecake',content:'Bánh ngọt',image:require('../../../../assets/image_9.jpg'),stylefood:'restaurent'},
-    {id:10,title:'Lean Yeast Bread',content:'Bánh ngọt',image:require('../../../../assets/image_10.jpg'),stylefood:'restaurent'},
+    {id:1,title:'Cake',content:'#Bánh ngọt #Bánh Chay',image:require('../../../../assets/image_1.jpg'),stylefood:'restaurent',rating:4},
+    {id:2,title:'Scone',content:'Bánh Mặn',image:require('../../../../assets/image_2.jpg'),stylefood:'restaurent',rating:2},
+    {id:3,title:'Fritters',content:'Bánh ngọt',image:require('../../../../assets/image_3.jpg'),stylefood:'restaurent',rating:5},
+    {id:4,title:'Cupcake',content:'Bánh ngọt',image:require('../../../../assets/image_4.jpg'),stylefood:'restaurent',rating:1},
+    {id:5,title:'Coffee cake',content:'Bánh Mặn',image:require('../../../../assets/image_5.jpg'),stylefood:'restaurent',rating:3},
+    {id:6,title:'Cake Donut',content:'Bánh ngọt',image:require('../../../../assets/image_6.jpg'),stylefood:'restaurent',rating:3},
+    {id:7,title:'Mousse',content:'Bánh Mặn',image:require('../../../../assets/image_7.jpg'),stylefood:'restaurent',rating:4},
+    {id:8,title:'Banh Pie',content:'Bánh Mặn',image:require('../../../../assets/image_8.jpg'),stylefood:'restaurent',rating:5},
+    {id:9,title:'Cheesecake',content:'Bánh ngọt',image:require('../../../../assets/image_9.jpg'),stylefood:'restaurent',rating:5},
+    {id:10,title:'Lean Yeast Bread',content:'Bánh ngọt',image:require('../../../../assets/image_10.jpg'),stylefood:'restaurent',rating:5},
 ]
 
 export default SearchScreen;

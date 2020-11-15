@@ -13,8 +13,8 @@ import { useNavigation } from '@react-navigation/native';
 import Swiper from 'react-native-swiper';
 import { FlatList } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { Entypo } from '@expo/vector-icons'; 
-
+import { LogBox } from 'react-native';
+import {rating} from '../../../Component/Star_rating/star';
 const wait = (timeout) => {
   return new Promise(resolve => {
     setTimeout(resolve, timeout);
@@ -33,6 +33,7 @@ const Food = () =>  {
   }, []);
 
   useEffect(()=>{
+    LogBox.ignoreAllLogs();
     navigation.setOptions({
       headerRight: () => (
         <View style ={{marginLeft:10}}>
@@ -47,7 +48,6 @@ const Food = () =>  {
     ),
   })},[navigation])
   
-
   const Card = ({item,index}) => {
     return(
             <View style = {{flex:1,
@@ -56,7 +56,15 @@ const Food = () =>  {
             alignSelf:'center',
             marginTop:10,
             backgroundColor:"#FFF",
-            borderRadius:8
+            borderRadius:8,
+            shadowColor: "#000",
+            shadowOffset: {
+                width: 0,
+                height: 2,
+            },
+            shadowOpacity: 0.25,
+            shadowRadius: 3.84,
+            elevation: 7
             }}>
               <Image 
               key = {index}
@@ -73,8 +81,8 @@ const Food = () =>  {
                   {item.titleCard}
                   </Text>
                 </TouchableOpacity>
-                <Entypo name="star" size={18} color="#FDCC0D"/>
-                <Text>
+                {rating(item.rating)}
+                <Text style ={{marginTop:4,width:"95%"}}>
                 {item.content}
                 </Text>
               </View>
@@ -112,10 +120,13 @@ const Food = () =>  {
             </View>
           </Swiper>
         </View>
+        <View style = {styles.containerToprecent}>
+          <Text style = {styles.txtrecent}>Topic</Text>
+        </View>
         <View style={styles.categoryContainer}>
           <TouchableOpacity 
           style={styles.categoryBtn} 
-          onPress = {()=> navigation.navigate('ListFood')}>
+          onPress = {()=> navigation.navigate('ListFood',{title:'Restaurent Foods'})}>
             <View style={styles.categoryIcon}>
               <Image 
               source ={require('../../../../assets/food.png')}
@@ -127,7 +138,7 @@ const Food = () =>  {
           </TouchableOpacity>
           <TouchableOpacity 
           style={[styles.categoryBtn,{marginLeft:20}]}
-          onPress = {()=> navigation.navigate('Detail')}
+          onPress = {()=> navigation.navigate('ListFood',{title:'Classic Foods'})}
           >
             <View style={styles.categoryIcon}>
               <Image 
@@ -140,7 +151,7 @@ const Food = () =>  {
           </TouchableOpacity>
           <TouchableOpacity 
           style={[styles.categoryBtn,{marginLeft:20}]}
-          onPress = {()=> navigation.navigate('Detail')}
+          onPress = {()=> navigation.navigate('Detail',{title:'Classic'})}
           >
             <View style={styles.categoryIcon}>
               <Image 
@@ -216,21 +227,28 @@ const data = [
   image:require('../../../../assets/image_1.jpg'), 
   titleCard:'Tiramisu', 
   content: 'Tiramisu là loại bánh ngọt tráng miệng vị cà phê rất nổi tiếng của Italy bột cacao...',
-  rating:3.4
+  rating:3
 },
 {
   id:2,
   image:require('../../../../assets/image_5.jpg'), 
   titleCard:'Coffee Cake', 
   content: 'Coffee Cake là loại bánh ngọt tráng miệng vị cà phê rất nổi tiếng của American bột cacao...',
-  rating:4.4
+  rating:5
 },
 {
   id:3,
-  image:require('../../../../assets/image_4.jpg'), 
-  titleCard:'Phở', 
-  content: '- Phở or pho is a Vietnamese soup consisting of broth, rice noodles, herbs, and meat.',
-  rating:2.7
+  image:require('../../../../assets/image_7.jpg'), 
+  titleCard:'Coffe Cake', 
+  content: '- Coffe Cake is cake consisting of broth, rice noodles, herbs, and meat.',
+  rating:3
+},
+{
+  id:4,
+  image:require('../../../../assets/image_6.jpg'), 
+  titleCard:'Donuot', 
+  content: '- Donuot is consisting of broth, rice noodles, herbs, and meat.',
+  rating:2
 }
 ];
 
@@ -238,7 +256,7 @@ const data = [
 
 const styles = StyleSheet.create({
   container:{
-    flex:1
+    flex:1,
   },
   container_slider:{
     width:"90%",
@@ -311,14 +329,14 @@ const styles = StyleSheet.create({
     marginTop:10,
   },
   cardImage:{
-    height:110,
-    width:110,
+    height:115,
+    width:115,
     justifyContent:'center',
-    borderRadius:8
+    borderBottomLeftRadius:8,
+    borderTopLeftRadius:8
   },
   txtCard:{
     marginLeft:14,
-    marginTop:8,
     justifyContent:'center',
     alignSelf:'center',
   },
