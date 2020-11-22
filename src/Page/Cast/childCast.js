@@ -10,8 +10,28 @@ const CreateHomeChild = () => {
     
 return(
     <Stack.Navigator>
-        <Stack.Screen name = "Cast" component = {Cast}/>
-        <Stack.Screen name = "Info" component = {Info}/>
+        <Stack.Screen 
+        name = "Cast" 
+        component = {Cast}
+        options ={{
+            title:"Giỏ Hàng",
+            headerStyle :{
+                elevation: 0,
+                shadowOpacity: 0,
+                borderBottomWidth: 0,
+            }
+        }}
+        />
+        <Stack.Screen 
+        name = "Info" 
+        component = {Info}
+        options ={{
+            elevation: 0,
+            shadowOpacity: 0,
+            borderBottomWidth: 0,
+            title : "Information"
+        }}
+        />
         <Stack.Screen name = "Complete" component = {Complete}/>
     </Stack.Navigator>  
     )

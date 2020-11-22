@@ -7,7 +7,8 @@ import {
   Text ,
   ScrollView ,
   TouchableOpacity,
-  RefreshControl
+  RefreshControl,
+  StatusBar
  } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Swiper from 'react-native-swiper';
@@ -50,21 +51,22 @@ const Food = () =>  {
   
   const Card = ({item,index}) => {
     return(
-            <View style = {{flex:1,
+            <TouchableOpacity 
+            onPress = {() =>navigation.navigate('Detail',{item})}
+            style = {{flex:1,
             flexDirection:'row',
             width:"90%",
             alignSelf:'center',
             marginTop:10,
-            backgroundColor:"#FFF",
             borderRadius:8,
             shadowColor: "#000",
             shadowOffset: {
-                width: 0,
-                height: 2,
+              width: 0,
+              height: 2,
             },
-            shadowOpacity: 0.25,
-            shadowRadius: 3.84,
-            elevation: 7
+            shadowOpacity: 0.2,
+            shadowRadius: 2,
+            elevation: 5
             }}>
               <Image 
               key = {index}
@@ -72,13 +74,13 @@ const Food = () =>  {
               resizeMode ="cover"
               style = {styles.cardImage}
               />
-              <View style = {{flex:1,flexDirection:'collum',marginLeft:8}}>
+              <View style = {{flex:1,flexDirection:'column',marginLeft:8}}>
                 <TouchableOpacity 
-                onPress = {() => navigation.navigate('Detail')}
+                onPress = {() =>navigation.navigate('Detail',{item})}
                 style = {{flexDirection:'row',width:"100%"}}
-                >
+                > 
                   <Text style = {styles.titleCard}>
-                  {item.titleCard}
+                  {item.title}
                   </Text>
                 </TouchableOpacity>
                 {rating(item.rating)}
@@ -86,11 +88,13 @@ const Food = () =>  {
                 {item.content}
                 </Text>
               </View>
-            </View>
+            </TouchableOpacity>
     )
   }
 
     return (
+    <View style ={{flex:1,backgroundColor:'#FFF'}}>
+    <StatusBar barStyle='black-content'/>
     <ScrollView 
     style={styles.container}
     refreshControl = {<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
@@ -126,7 +130,7 @@ const Food = () =>  {
         <View style={styles.categoryContainer}>
           <TouchableOpacity 
           style={styles.categoryBtn} 
-          onPress = {()=> navigation.navigate('ListFood',{title:'Restaurent Foods'})}>
+          onPress = {()=> navigation.navigate('ListFood',{title:'Restaurent Foods',stylefood:'restaurent'})}>
             <View style={styles.categoryIcon}>
               <Image 
               source ={require('../../../../assets/food.png')}
@@ -138,7 +142,7 @@ const Food = () =>  {
           </TouchableOpacity>
           <TouchableOpacity 
           style={[styles.categoryBtn,{marginLeft:20}]}
-          onPress = {()=> navigation.navigate('ListFood',{title:'Classic Foods'})}
+          onPress = {()=> navigation.navigate('ListFood',{title:'Classic Foods',stylefood:'classic'})}
           >
             <View style={styles.categoryIcon}>
               <Image 
@@ -151,7 +155,7 @@ const Food = () =>  {
           </TouchableOpacity>
           <TouchableOpacity 
           style={[styles.categoryBtn,{marginLeft:20}]}
-          onPress = {()=> navigation.navigate('Detail',{title:'Classic'})}
+          onPress = {()=> navigation.navigate('ListFood',{title:'Fast Food',stylefood:'fastfood'})}
           >
             <View style={styles.categoryIcon}>
               <Image 
@@ -166,7 +170,7 @@ const Food = () =>  {
         <View style={styles.categoryContainer}>
         <TouchableOpacity 
         style={styles.categoryBtn}
-        onPress = {()=> navigation.navigate('Detail')}
+        onPress = {()=> navigation.navigate('ListFood',{title:'Fruits',stylefood:'Fruits'})}
         >
           <View style={styles.categoryIcon}>
             <Image 
@@ -179,7 +183,7 @@ const Food = () =>  {
         </TouchableOpacity>
         <TouchableOpacity 
         style={[styles.categoryBtn,{marginLeft:20}]}
-        onPress = {()=> navigation.navigate('Detail')}
+        onPress = {()=> navigation.navigate('ListFood',{title:'Drinks',stylefood:'Drinks'})}
         >
           <View style={styles.categoryIcon}>
             <Image 
@@ -192,7 +196,7 @@ const Food = () =>  {
         </TouchableOpacity>
         <TouchableOpacity 
         style={[styles.categoryBtn,{marginLeft:20}]}
-        onPress = {()=> navigation.navigate('Detail')}
+        onPress = {()=> navigation.navigate('ListFood',{title:'Cakes',stylefood:'Cakes'})}
         >
           <View style={styles.categoryIcon}>
             <Image 
@@ -218,6 +222,7 @@ const Food = () =>  {
       keyExtractor={(i,k) => k.toString()}
       />
     </ScrollView>
+    </View>
     );
 }
 
@@ -225,30 +230,38 @@ const data = [
 {
   id:1,
   image:require('../../../../assets/image_1.jpg'), 
-  titleCard:'Tiramisu', 
+  title:'Tiramisu', 
   content: 'Tiramisu là loại bánh ngọt tráng miệng vị cà phê rất nổi tiếng của Italy bột cacao...',
-  rating:3
+  rating:3,
+  stylefood:'restaurent',
+  price:34000
 },
 {
   id:2,
   image:require('../../../../assets/image_5.jpg'), 
-  titleCard:'Coffee Cake', 
+  title:'Coffee Cake', 
   content: 'Coffee Cake là loại bánh ngọt tráng miệng vị cà phê rất nổi tiếng của American bột cacao...',
-  rating:5
+  rating:5,
+  stylefood:'restaurent',
+  price:92200
 },
 {
   id:3,
   image:require('../../../../assets/image_7.jpg'), 
-  titleCard:'Coffe Cake', 
+  title:'Coffe Cake', 
   content: '- Coffe Cake is cake consisting of broth, rice noodles, herbs, and meat.',
-  rating:3
+  rating:3,
+  stylefood:'restaurent',
+  price:45301
 },
 {
   id:4,
   image:require('../../../../assets/image_6.jpg'), 
-  titleCard:'Donuot', 
+  title:'Donuot', 
   content: '- Donuot is consisting of broth, rice noodles, herbs, and meat.',
-  rating:2
+  rating:2,
+  stylefood:'restaurent',
+  price:23400
 }
 ];
 
@@ -332,8 +345,7 @@ const styles = StyleSheet.create({
     height:115,
     width:115,
     justifyContent:'center',
-    borderBottomLeftRadius:8,
-    borderTopLeftRadius:8
+    borderRadius:8
   },
   txtCard:{
     marginLeft:14,

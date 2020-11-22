@@ -4,20 +4,33 @@ import { Button, View,Text ,TouchableOpacity, StyleSheet,Image,FlatList} from 'r
 import { TextInput } from 'react-native';
 import { ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; 
-import { EvilIcons } from '@expo/vector-icons';
-import { Feather } from '@expo/vector-icons'; 
 import { MaterialIcons } from '@expo/vector-icons'; 
 import { MaterialCommunityIcons } from '@expo/vector-icons'; 
 import { Entypo } from '@expo/vector-icons'; 
 import {rating}  from '../../../Component/Star_rating/star';
-import { AntDesign } from '@expo/vector-icons'; 
 
 const ListFood = () => {
     const navigation = useNavigation();
     const route = useRoute();
     const textInput = React.useRef(null);
+    function filterItems(arr, query) {
+        return arr.filter(function(el) {
+            return el.stylefood.toLowerCase().indexOf(query.toLowerCase()) !== -1
+        })
+    }
+    let [data,setData] = React.useState([
+    {id:6,title:'Cake Donut',content:'Bánh ngọt',image:require('../../../../assets/image_6.jpg'),stylefood:'restaurent',rating:3,price:50000},
+    {id:7,title:'Mousse',content:'Bánh Mặn',image:require('../../../../assets/image_7.jpg'),stylefood:'restaurent',rating:4,price:70350},
+    {id:8,title:'Banh Pie',content:'Bánh Mặn',image:require('../../../../assets/image_8.jpg'),stylefood:'classic',rating:5,price:56000},
+    {id:9,title:'Cheesecake',content:'Bánh ngọt',image:require('../../../../assets/image_9.jpg'),stylefood:'classic',rating:5,price:52000},
+    {id:6,title:'Cake Donut',content:'Bánh ngọt',image:require('../../../../assets/image_6.jpg'),stylefood:'classic',rating:3,price:120000},
+    {id:7,title:'Mousse',content:'Bánh Mặn',image:require('../../../../assets/image_7.jpg'),stylefood:'restaurent',rating:4,price:93400},
+    {id:8,title:'Banh Pie',content:'Bánh Mặn',image:require('../../../../assets/image_8.jpg'),stylefood:'restaurent',rating:5,price:15300},
+    {id:9,title:'Cheesecake',content:'Bánh ngọt',image:require('../../../../assets/image_9.jpg'),stylefood:'classic',rating:5,price:75700},
+    ]);
+    let {title,stylefood} = route.params;
+    let [realdata,Setrealdata] = React.useState(filterItems(data,stylefood));
 
-    let title = route.params.title;
     React.useEffect(()=> {
         navigation.setOptions({
             headerLeft:()=>(
@@ -28,11 +41,11 @@ const ListFood = () => {
             ),
             title:''
         })
-    })
+    },[navigation])
 
     const CardItem = ({item,index}) => {
         return(
-            <TouchableOpacity style ={styles.backgroud_card}>
+            <TouchableOpacity style ={styles.backgroud_card} onPress = {() => navigation.navigate('Detail',{item})}>
                         <View style ={styles.container_card}>
                             <View style ={styles.container_image}>
                                 <Image 
@@ -41,7 +54,7 @@ const ListFood = () => {
                                 style ={styles.style_image}
                                 />
                             </View>
-                            <View style ={{marginLeft:14,flexDirection:'collum',width:"65%"}}>
+                            <View style ={{marginLeft:14,flexDirection:'column',width:"65%"}}>
                                 <Text
                                 numberOfLines ={1}
                                 style ={{fontSize:15,fontWeight:'500'}}
@@ -124,7 +137,7 @@ const ListFood = () => {
             <View style = {{flex:1}}>
                 <ScrollView style = {{flexDirection:'column'}}>
                     <FlatList 
-                    data = {data}
+                    data = {realdata}
                     renderItem = {CardItem}
                     keyExtractor={(i,k) => k.toString()}
                     />
@@ -133,17 +146,6 @@ const ListFood = () => {
         </View>
     )
 }
-
-const data = [
-    {id:6,title:'Cake Donut',content:'Bánh ngọt',image:require('../../../../assets/image_6.jpg'),stylefood:'restaurent',rating:3},
-    {id:7,title:'Mousse',content:'Bánh Mặn',image:require('../../../../assets/image_7.jpg'),stylefood:'restaurent',rating:4},
-    {id:8,title:'Banh Pie',content:'Bánh Mặn',image:require('../../../../assets/image_8.jpg'),stylefood:'restaurent',rating:5},
-    {id:9,title:'Cheesecake',content:'Bánh ngọt',image:require('../../../../assets/image_9.jpg'),stylefood:'restaurent',rating:5},
-    {id:6,title:'Cake Donut',content:'Bánh ngọt',image:require('../../../../assets/image_6.jpg'),stylefood:'restaurent',rating:3},
-    {id:7,title:'Mousse',content:'Bánh Mặn',image:require('../../../../assets/image_7.jpg'),stylefood:'restaurent',rating:4},
-    {id:8,title:'Banh Pie',content:'Bánh Mặn',image:require('../../../../assets/image_8.jpg'),stylefood:'restaurent',rating:5},
-    {id:9,title:'Cheesecake',content:'Bánh ngọt',image:require('../../../../assets/image_9.jpg'),stylefood:'restaurent',rating:5},
-]
 
 const styles = StyleSheet.create({
     container:{

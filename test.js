@@ -1,10 +1,12 @@
 const axios = require('axios');
-
-const getMoviesFromApi = () => {
-    return axios.get('https://reactnative.dev/movies.json')
-    .then(res => {
+var fetch = require("node-fetch");
+const getMoviesFromApi = async() => {
+    return await fetch('http://25.71.124.112:8000/food/getAllFood',{
+        method:"GET"
+    })
+    .then(async res => {
         if(res.status === 200){
-            console.log(res.data)
+            return await res.json();
         }
     })
 };

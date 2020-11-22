@@ -1,4 +1,4 @@
-import React,{useEffect} from 'react';
+import * as React from 'react';
 import {
     View,
     Text,
@@ -13,6 +13,9 @@ import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { LogBox } from 'react-native';
 import {rating} from '../../../Component/Star_rating/star';
+import {getAllFood} from '../../../Serviece/serviece';
+
+const axios = require('axios');
 const SearchScreen = () => {
     
     const navigation = useNavigation();
@@ -24,7 +27,7 @@ const SearchScreen = () => {
             return el.title.toLowerCase().indexOf(query.toLowerCase()) !== -1
         })
     }
-    useEffect(()=>{
+    React.useEffect(async()=>{
         LogBox.ignoreAllLogs();
         navigation.setOptions({
             title:'',
@@ -70,7 +73,6 @@ const SearchScreen = () => {
                 />
             ),
       })},[navigation,value])
-
       const Items = ({item,index}) => {
         return(
             <View style ={styles.Containerlist}>

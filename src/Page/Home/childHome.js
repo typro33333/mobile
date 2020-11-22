@@ -50,7 +50,16 @@ return(
         }}
         />
         <Stack.Screen name = "ListFood" component = {ListFood}/>
-        <Stack.Screen name = "Detail" component = {Detail}/>
+        <Stack.Screen
+        name = "Detail" 
+        component = {Detail}
+        options ={({}) => ({
+            headerBackTitleVisible:false,
+            headerTitle:false,
+            headerTransparent:true,
+            headerTintColor:"#FFF"
+        })}
+        />
         <Stack.Screen name = "Order" component = {Order} /> 
     </Stack.Navigator>
     )
