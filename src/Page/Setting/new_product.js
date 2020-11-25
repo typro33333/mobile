@@ -1,22 +1,51 @@
 import React, { useState, useEffect } from 'react';
-import {Image, View, Platform,Text } from 'react-native';
+import {Image, View, Platform,Text, ScrollView ,KeyboardAvoidingView,ImageBackground} from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { TouchableOpacity } from 'react-native';
 import axios from 'axios';
+import {Input} from 'react-native-elements';
+import { AntDesign,MaterialCommunityIcons,FontAwesome } from '@expo/vector-icons';
+import { Entypo } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
+import { FontAwesome5 } from '@expo/vector-icons';
 export default function ImagePickerExample() {
+  const [plholder,setPlhoder] = useState();
   const [image, setImage] = useState(null);
   const [base64,setBase64] = useState();
-
-  const Uploadfile = async(imageurl)  => {
-    const url = 'http://tdtsv.ddns.net:8000/UploadIMG';
-    const res = await axios.post(url,JSON.parse({file:(imageurl)}))
-    .catch(function (error) {
-      if (error.response) {
-        console.log(error.response.status);
-      }
-    });
+  const [trigger,setTrigger] = useState(false);
+  const [typefood,setTypefood] = useState();
+  const [rating,setRating] = useState(3);
+  const [content,setContent] = useState();
+  const [price,setPrice]=useState();
+  const [title,setTitle] =useState()
+  const [tag,setTag] = useState();
+  const [type,setType] =useState([
+    {id:1,active:false},
+    {id:2,active:false},
+    {id:3,active:false},
+    {id:4,active:false},
+    {id:5,active:false},
+    {id:6,active:false}
+  ]);
+  const Uploadfile = async(base64,typefood,rating,price,title,tag,content)  => {
+    const url = 'http://tdtsv.ddns.net:8000/food/addNewFood';
+    const stringdata = ("data:image/png;base64,"+base64);
+    const data = {
+      file:stringdata,
+      FoodType:typefood,
+      Rating:rating,
+      Price:price,
+      Title:title,
+      TagContent:tag,
+      Content:content
+    }
+    const res = await fetch(url,{
+      method:'POST',
+      body:JSON.stringify(data)
+    })
+    console.log(res.status);
   }
-
+  console.log(content)
   useEffect(() => {
     (async () => {
       if (Platform.OS !== 'web') {
@@ -26,46 +55,274 @@ export default function ImagePickerExample() {
         }
       }
     })();
-  }, []);
+  },[]);
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
-      quality:0,
-      aspect:[2,2],
+      quality:1,
+      aspect:[3,4],
+      base64:true
     });
     if (!result.cancelled) {
       setImage(result.uri);
       setBase64(result.base64);
+      setPlhoder(true)
     };
   }
-  console.log(image)
+  const click = (id) => {
+    for(var i =0;i<type.length;i++){
+      type[i].active=false
+    }
+    for(var i =0;i<type.length;i++){
+      if(id === type[i].id){
+        type[i].active=true
+      }
+    }
+    setTrigger(!trigger)
+  }
+
+  const remove = (rating) => {
+    if(rating === 1){
+      return(
+        <TouchableOpacity>
+          <Ionicons name="ios-remove-circle" size={30} color="#D5D8DC" />
+        </TouchableOpacity>
+      )
+    }else{
+      return(
+        <TouchableOpacity
+        onPress = {()=>{
+          setRating(rating-1)
+        }}>
+          <Ionicons name="ios-remove-circle" size={30} color="#609FFF" />
+        </TouchableOpacity>
+      )
+    }
+  }
+  const add = (rating) => {
+    if(rating===5){
+      return(
+        <View>
+          <Ionicons name="ios-add-circle" size={30} color="#D5D8DC" />
+        </View>
+      )
+    }else{
+      return(
+        <TouchableOpacity
+        onPress = {()=>{
+          setRating(rating+1)
+        }}
+        >
+          <Ionicons name="ios-add-circle" size={30} color="#609FFF" />
+        </TouchableOpacity>
+      )
+    }
+  }
+
+  const starRating = (rating) => {
+    let arr = []
+    for(var i =0;i<rating;i++){
+      arr.push(<Entypo name="star" size={24} color="#FDCC0D" key={i} />)
+    }
+    return(
+      <View style ={{marginLeft:"14%",flexDirection:'row'}}>
+        {arr}
+      </View>
+    )
+  }
+
   return (
-    <View style={{ flex: 1}}>
+    <View style={{ flex:1,backgroundColor:'#FFF'}}>
+      <KeyboardAvoidingView
+      behavior={Platform.OS == "ios" ? "padding" : "height"}
+      keyboardVerticalOffset = {Platform.OS === 'ios' ? 100 : 0}
+      style ={{flex:1}}
+      >
+      <ScrollView>
       <TouchableOpacity 
       onPress ={pickImage}
-      style ={{alignSelf:'center',height:300,width:400}}>
-      {image && 
-        <Image 
-        source={{ uri: image }} style={{ width:400, height: 300 }}
-        resizeMode ="cover"
-        />}
-      </TouchableOpacity>
-      <TouchableOpacity 
-      style ={{}}
-      >
-        <View style ={{height:200,width:200,borderWidth:1}}>
-          <Image 
-          source = {{uri:'data:image/png;base64,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'}}
-          style ={{height:200,width:200}}/>
-        </View>
-      </TouchableOpacity>
-      <TouchableOpacity
-      onPress ={()=>Uploadfile(image)}>
+      style ={{alignSelf:'center',height:300,width:380,marginTop:10,backgroundColor:'#FFF'}}>
+      {plholder?
         <View>
-          <Text>Upload image</Text>
+          <ImageBackground 
+          source={{ uri: image }} style={{ width:380, height: 300 }}
+          resizeMode ="cover"
+          />
         </View>
+      :
+      <View>
+        <View style ={{position:'absolute',zIndex:999,top: 0,left: 0,right: 0,bottom: 0,justifyContent: 'center', alignItems: 'center'}}>
+          <View style ={{flexDirection:'row',width:180,justifyContent:'center',alignItems:'center',height:34,borderRadius:100,backgroundColor:'#72B3FF'}}>
+            <AntDesign name="upload" size={20} color="#FFF" />
+            <Text style ={{color:'#FFF',marginLeft:6}}>Upload Image</Text>
+          </View>
+        </View>
+        <ImageBackground
+        source = {require('../../../assets/upload_1.jpg')}
+        resizeMode = "cover"
+        style ={{height:300,width:380,resizeMode:'cover'}}
+        imageStyle = {{opacity:0.4}}
+        />
+      </View>}
       </TouchableOpacity>
+      <View style ={{marginTop:10}}>
+        <View style ={{flexDirection:'column'}}>
+          <View style ={{flexDirection:'row',alignSelf:'center',marginBottom:15}}>
+            <MaterialCommunityIcons name="food" size={22} color="black" />
+            <Text style={{fontSize:18,fontWeight:'600',marginLeft:3}}>Food Type</Text>
+          </View>
+          <View style ={{flexDirection:'column'}}>
+            <View style ={{flexDirection:"row",alignItems:'center',justifyContent:'center',marginBottom:10}}>
+              {type[0].active?
+                <TouchableOpacity
+                style ={{backgroundColor:'#76D565',borderRadius:100,width:100,alignItems:'center',height:30,justifyContent:'center'}}
+                >
+                  <Text style={{color:'#FFF',fontSize:13}}>Restaurant</Text>
+                </TouchableOpacity>
+                :
+                <TouchableOpacity
+                onPress = {()=>{click(1),setTypefood('restaurant')}}
+                style ={{backgroundColor:'#609FFF',borderRadius:100,width:100,alignItems:'center',height:30,justifyContent:'center'}}
+                >
+                  <Text style={{color:'#FFF',fontSize:13}}>Restaurant</Text>
+                </TouchableOpacity>
+              }
+              {type[1].active?
+              <TouchableOpacity
+              style ={{backgroundColor:'#76D565',marginLeft:30,marginRight:30,borderRadius:100,width:100,alignItems:'center',height:30,justifyContent:'center'}}>
+                <Text style={{color:'#FFF',fontSize:13}}>Classic</Text>
+              </TouchableOpacity>
+              :
+              <TouchableOpacity
+              onPress = {()=>{click(2),setTypefood('classic')}}
+              style ={{backgroundColor:'#609FFF',marginLeft:30,marginRight:30,borderRadius:100,width:100,alignItems:'center',height:30,justifyContent:'center'}}>
+                <Text style={{color:'#FFF',fontSize:13}}>Classic</Text>
+              </TouchableOpacity>
+              }
+              {type[2].active?
+              <TouchableOpacity
+              style ={{backgroundColor:'#76D565',borderRadius:100,width:100,alignItems:'center',height:30,justifyContent:'center'}}>
+                <Text style={{color:'#FFF',fontSize:13}}>F-Food</Text>
+              </TouchableOpacity>
+              :
+              <TouchableOpacity
+              onPress = {()=>{click(3);setTypefood('fastfood')}}
+              style ={{backgroundColor:'#609FFF',borderRadius:100,width:100,alignItems:'center',height:30,justifyContent:'center'}}>
+                <Text style={{color:'#FFF',fontSize:13}}>F-Food</Text>
+              </TouchableOpacity>
+              }
+            </View>
+            <View style ={{flexDirection:"row",alignItems:'center',justifyContent:'center',marginBottom:10}}>
+              {type[3].active?
+              <TouchableOpacity
+              style ={{backgroundColor:'#76D565',borderRadius:100,width:100,alignItems:'center',height:30,justifyContent:'center'}}
+              >
+                <Text style={{color:'#FFF',fontSize:13}}>Fruits</Text>
+              </TouchableOpacity>
+              :
+              <TouchableOpacity
+              onPress = {()=>{click(4);setTypefood('fruits')}}
+              style ={{backgroundColor:'#609FFF',borderRadius:100,width:100,alignItems:'center',height:30,justifyContent:'center'}}
+              >
+                <Text style={{color:'#FFF',fontSize:13}}>Fruits</Text>
+              </TouchableOpacity>
+              }
+              {type[4].active?
+              <TouchableOpacity
+              style ={{backgroundColor:'#76D565',marginLeft:30,marginRight:30,borderRadius:100,width:100,alignItems:'center',height:30,justifyContent:'center'}}>
+                <Text style={{color:'#FFF',fontSize:13}}>Drinks</Text>
+              </TouchableOpacity>
+              :
+              <TouchableOpacity
+              onPress = {()=>{click(5);setTypefood('drinks')}}
+              style ={{backgroundColor:'#609FFF',marginLeft:30,marginRight:30,borderRadius:100,width:100,alignItems:'center',height:30,justifyContent:'center'}}>
+                <Text style={{color:'#FFF',fontSize:13}}>Drinks</Text>
+              </TouchableOpacity>
+              }
+              {type[5].active?
+              <TouchableOpacity
+              style ={{backgroundColor:'#76D565',borderRadius:100,width:100,alignItems:'center',height:30,justifyContent:'center'}}>
+                <Text style={{color:'#FFF',fontSize:13}}>Cakes</Text>
+              </TouchableOpacity>
+              :
+              <TouchableOpacity
+              onPress = {()=>{click(6);setTypefood('Cakes')}}
+              style ={{backgroundColor:'#609FFF',borderRadius:100,width:100,alignItems:'center',height:30,justifyContent:'center'}}>
+                <Text style={{color:'#FFF',fontSize:13}}>Cakes</Text>
+              </TouchableOpacity>
+              }
+            </View>
+          </View>
+        </View>
+      </View>
+      <View style ={{marginTop:10,flexDirection:'column'}}>
+        <View style ={{justifyContent:'center',alignItems:'center',flexDirection:'row'}}>
+          <MaterialCommunityIcons name="google-analytics" size={20} color="black"/>
+          <Text style ={{fontSize:18,fontWeight:'500',marginLeft:4}}>Rating</Text>
+        </View>
+        <View style ={{flexDirection:'row',justifyContent:'space-between',marginTop:16}}>
+          {starRating(rating)}
+          <View style ={{marginRight:40,width:130}}>
+            <View style ={{flexDirection:'row'}}>
+              {remove(rating)}
+              <View style ={{marginLeft:30,marginRight:30}}>
+                <Text style={{fontSize:22}}>{rating}</Text>
+              </View>
+              {add(rating)}
+            </View>
+          </View>
+        </View>
+      </View>
+      <View style ={{marginTop:20}}>
+        <Input
+          onChangeText = {(text)=>setTitle(text)}
+          label = 'Title'
+          placeholder='123456...'
+          leftIcon ={<MaterialCommunityIcons name="format-title" size={24} color="black" />}
+        />
+      </View>
+      <View>
+        <Input
+          onChangeText = {(text)=>setPrice(text)}
+          label = 'Price'
+          placeholder='1234567890...'
+          leftIcon ={<MaterialCommunityIcons name="cash-usd" size={24} color="black" />}
+        />
+      </View>
+      <View>
+        <Input
+          onChangeText = {(text)=>setTag(text)}
+          label = '#Tag'
+          placeholder='#food,sugar,...'
+          leftIcon ={<AntDesign name="tago" size={24} color="black" />}
+        />
+      </View>
+      <View>
+        <Input
+          onChangeText = {(text)=>setContent(text)}
+          label = 'Content'
+          placeholder='Abcxyz...'
+          leftIcon ={<FontAwesome5 name="edit" size={24} color="black" />}
+        />
+      </View>
+      {plholder?
+      <View style ={{alignSelf:'center',width:'93%',backgroundColor:'#458CFF'}}>
+        <TouchableOpacity
+        style ={{height:40,justifyContent:'center',alignItems:'center'}}
+        onPress ={()=>Uploadfile(base64,typefood,rating,price,title,tag,content)}>
+            <Text style ={{color:'#FFF',fontSize:15.5,fontWeight:'500'}}>Add New Food</Text>
+        </TouchableOpacity>
+      </View>
+      :
+      <View style ={{alignSelf:'center',width:'93%',backgroundColor:'#B3B3B3'}}>
+        <View style={{height:40,justifyContent:'center',alignItems:'center'}}>
+            <Text style ={{color:'#FFF',fontSize:15.5,fontWeight:'500'}}>Add New Food</Text>
+        </View>
+      </View>
+      }
+      </ScrollView>
+      </KeyboardAvoidingView>
     </View>
   );
 }

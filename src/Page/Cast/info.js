@@ -13,11 +13,31 @@ export default function Info() {
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const route = useRoute();
+  console.log(route.params.data)
   const navigation = useNavigation();
   const date = new Date();
   const datenow = (date.getDate()+"/"+(Number(date.getMonth())+1))+"/"+ date.getFullYear();
   const [loading,setLoading] = useState(true)
   
+  const purchase = async()  => {
+    const url = 'http://tdtsv.ddns.net:8000/bag/purchase';
+    const data = {
+      data:route.params.data,
+      code: "string",
+      UserName: "string",
+      Phone:"string",
+      OrderDate: "string",
+      RecieveDate: "string",
+      Destination: "string",
+      note:"string"
+    }
+    const res = await fetch(url,{
+      method:'POST',
+      body:JSON.stringify(data)
+    })
+    console.log(res.status);
+  }
+
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestPermissionsAsync();
@@ -118,7 +138,7 @@ export default function Info() {
             <Button 
             title ="Xác Nhận Đặt Hàng"
             color ="white"
-            onPress ={()=>{}}
+            onPress ={()=>purchase()}
             />
           </View>
         </View>

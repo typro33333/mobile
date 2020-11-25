@@ -24,13 +24,15 @@ const Cart = () =>  {
   const [value,setValue] = React.useState(0);
   const [check,setCheck] = React.useState(false)
   React.useEffect(()=>{
-    async function getdata(){
-      const url = 'http://tdtsv.ddns.net:8000/bag/getAllItem';
-      const res = await axios.get(url)
-      const resjson = await res.data;
-      setData(resjson);
-    }
-    getdata();
+    setTimeout(() => {
+      async function getdata(){
+        const url = 'http://tdtsv.ddns.net:8000/bag/getAllItem';
+        const res = await axios.get(url)
+        const resjson = await res.data;
+        setData(resjson);
+      }
+      getdata();
+    },300);
   })
 
   const deleteFood = async(id) => {
