@@ -16,6 +16,7 @@ const Detail = () =>  {
   const route = useRoute();
   const Stateprice = Number(route.params.item.Price);
   const [price,setPrice] = React.useState(Number(route.params.item.Price));
+  const realquantity = route.params.item.quantity;
   const [quatity,setQuatity] = React.useState(1)
   const navTitleView = useRef(null);
   const foodid = route.params.item.FoodId
@@ -30,8 +31,8 @@ const Detail = () =>  {
   }
   React.useEffect(()=> {
     async function rencent(){
-      const url = 'http://tdtsv.ddns.net:8000/topRecent/updateTopRecent'+foodid;
-      return await axios.get(url)
+        const url = 'http://tdtsv.ddns.net:8000/topRecent/updateTopRecent'+foodid;
+        return await axios.get(url)
     }
     rencent();
   },[foodid])
@@ -45,7 +46,7 @@ const Detail = () =>  {
     if(quatity >=2)
       return(
         <TouchableOpacity style = {{marginLeft:'10%'}} onPress ={_Delproduct}>
-          <Ionicons name="ios-remove-circle" size={36} color="#C0392B" />
+                <Ionicons name="ios-remove-circle" size={36} color="#C0392B" />
         </TouchableOpacity>
       )
     return(

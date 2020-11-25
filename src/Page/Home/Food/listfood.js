@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useNavigation,useRoute } from '@react-navigation/native';
-import { Button, View,Text ,TouchableOpacity, StyleSheet,Image,FlatList} from 'react-native';
+import { Button, View,Text ,TouchableOpacity, StyleSheet,FlatList,ActivityIndicator} from 'react-native';
 import { TextInput } from 'react-native';
 import { ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; 
@@ -8,7 +8,8 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons'; 
 import { Entypo } from '@expo/vector-icons'; 
 import {rating}  from '../../../Component/Star_rating/star';
-
+import axios from 'axios';
+import {Image} from 'react-native-elements';
 const ListFood = () => {
     const navigation = useNavigation();
     const route = useRoute();
@@ -18,19 +19,9 @@ const ListFood = () => {
             return el.stylefood.toLowerCase().indexOf(query.toLowerCase()) !== -1
         })
     }
-    let [data,setData] = React.useState([
-    {id:6,title:'Cake Donut',content:'Bánh ngọt',image:require('../../../../assets/image_6.jpg'),stylefood:'restaurent',rating:3,price:50000},
-    {id:7,title:'Mousse',content:'Bánh Mặn',image:require('../../../../assets/image_7.jpg'),stylefood:'restaurent',rating:4,price:70350},
-    {id:8,title:'Banh Pie',content:'Bánh Mặn',image:require('../../../../assets/image_8.jpg'),stylefood:'classic',rating:5,price:56000},
-    {id:9,title:'Cheesecake',content:'Bánh ngọt',image:require('../../../../assets/image_9.jpg'),stylefood:'classic',rating:5,price:52000},
-    {id:6,title:'Cake Donut',content:'Bánh ngọt',image:require('../../../../assets/image_6.jpg'),stylefood:'classic',rating:3,price:120000},
-    {id:7,title:'Mousse',content:'Bánh Mặn',image:require('../../../../assets/image_7.jpg'),stylefood:'restaurent',rating:4,price:93400},
-    {id:8,title:'Banh Pie',content:'Bánh Mặn',image:require('../../../../assets/image_8.jpg'),stylefood:'restaurent',rating:5,price:15300},
-    {id:9,title:'Cheesecake',content:'Bánh ngọt',image:require('../../../../assets/image_9.jpg'),stylefood:'classic',rating:5,price:75700},
-    ]);
     let {title,stylefood} = route.params;
-    let [realdata,Setrealdata] = React.useState(filterItems(data,stylefood));
-
+    console.log(stylefood)
+    const [data,setData] = React.useState([]);
     React.useEffect(()=> {
         navigation.setOptions({
             headerLeft:()=>(
@@ -41,38 +32,49 @@ const ListFood = () => {
             ),
             title:''
         })
-    },[navigation])
+    },[navigation]);
+
+    React.useEffect(()=> {
+        async function getdata(){
+            const url = 'http://tdtsv.ddns.net:8000/food/getFood'+stylefood;
+            const res = await axios.get(url)
+            const resjson = await res.data;
+            setData(resjson)
+        }
+        getdata();
+    },[stylefood])
 
     const CardItem = ({item,index}) => {
         return(
-            <TouchableOpacity style ={styles.backgroud_card} onPress = {() => navigation.navigate('Detail',{item})}>
+            <TouchableOpacity style ={styles.backgroud_card} onPress = {() => navigation.navigate('Detail',{item})} key ={index}>
                         <View style ={styles.container_card}>
                             <View style ={styles.container_image}>
                                 <Image 
-                                source = {item.image}
+                                source = {{uri:item.ImageUrl}}
                                 resizeMode = 'cover'
                                 style ={styles.style_image}
+                                PlaceholderContent ={<ActivityIndicator/>}
                                 />
                             </View>
                             <View style ={{marginLeft:14,flexDirection:'column',width:"65%"}}>
                                 <Text
                                 numberOfLines ={1}
                                 style ={{fontSize:15,fontWeight:'500'}}
-                                >{item.title} {' '} #Bánh Ngọt</Text>
+                                >{item.Title}</Text>
                                 <Text
                                 numberOfLines = {1}
                                 style = {{fontSize:12,fontWeight:'200',marginTop:10}}
                                 >
-                                Coffe Cake is cake consisting of broth, rice noodles, herbs, and meat.
+                                {item.Content}
                                 </Text>
                                 <View style ={{marginTop:10,flexDirection:'row'}}>
                                     <MaterialIcons name="attach-money" size={19} color="#FDCC0D"/>
-                                    <Text style ={{fontSize:13,fontWeight:'300'}}>50.000 ~ 70.000</Text>
+                                    <Text style ={{fontSize:13,fontWeight:'300'}}>{item.Price}</Text>
                                     <Text style ={{fontSize:11,fontWeight:'400',marginTop:3,marginLeft:4}}>Đồng</Text>
                                 </View>
                                 <View style = {{flexDirection:'row',marginTop:8,marginLeft:3}}>
                                     {rating(1)}
-                                    <Text style ={{fontSize:11,fontWeight:'900',marginTop:1}}> 4.5 . 3.4 km</Text>
+                                    <Text style ={{fontSize:11,fontWeight:'900',marginTop:1}}> {item.Rating} . 3.4 km</Text>
                                     <Text style ={{fontSize:11,marginTop:2,fontWeight:'200'}}> (something)</Text>
                                 </View>
                                 <View style ={{borderBottomColor:'black',borderBottomWidth:0.3,marginTop:10}}/>
@@ -137,7 +139,7 @@ const ListFood = () => {
             <View style = {{flex:1}}>
                 <ScrollView style = {{flexDirection:'column'}}>
                     <FlatList 
-                    data = {realdata}
+                    data = {data}
                     renderItem = {CardItem}
                     keyExtractor={(i,k) => k.toString()}
                     />
@@ -150,7 +152,8 @@ const ListFood = () => {
 const styles = StyleSheet.create({
     container:{
         flex:1,
-        flexDirection:'column'
+        flexDirection:'column',
+        backgroundColor:'#FFF'
     },
     containerSearch:{
         width:"95%",

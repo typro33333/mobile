@@ -7,28 +7,39 @@ import {
     TouchableOpacity,
     FlatList,
     ScrollView,
-    Image
+    ActivityIndicator
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { LogBox } from 'react-native';
 import {rating} from '../../../Component/Star_rating/star';
-import {getAllFood} from '../../../Serviece/serviece';
+import axios from 'axios';
+import {Image} from 'react-native-elements';
 
-const axios = require('axios');
 const SearchScreen = () => {
-    
     const navigation = useNavigation();
     const [value,setValue] = React.useState('');
+    const [data,setData] = React.useState()
     const [currentData,setCurrentData] = React.useState(data)
     const [search,setSearch] = React.useState(false);
     function filterItems(arr, query) {
         return arr.filter(function(el) {
-            return el.title.toLowerCase().indexOf(query.toLowerCase()) !== -1
+            return el.Title.toLowerCase().indexOf(query.toLowerCase()) !== -1
         })
     }
-    React.useEffect(async()=>{
-        LogBox.ignoreAllLogs();
+
+    React.useEffect(()=>{
+        async function getdata(){
+            const url = 'http://tdtsv.ddns.net:8000/food/getAllFood';
+            const res = await axios.get(url)
+            const resjson = await res.data;
+            setData(resjson);
+            setCurrentData(resjson);
+        }
+        getdata();
+    },[])
+    React.useEffect(()=>{
+        LogBox.ignoreAllLogs(); 
         navigation.setOptions({
             title:'',
             headerLeft: () => (
@@ -52,7 +63,7 @@ const SearchScreen = () => {
                                 setSearch(true);
                                 return setTimeout(()=>{
                                     setSearch(false);
-                                },1500)
+                                },1000)
                             }else{
                                 setValue(text);
                                 setCurrentData(filterItems(data,text));
@@ -72,7 +83,8 @@ const SearchScreen = () => {
                 style ={{marginRight:18,marginTop:0.5}}
                 />
             ),
-      })},[navigation,value])
+      })},[navigation,value,data])
+
       const Items = ({item,index}) => {
         return(
             <View style ={styles.Containerlist}>
@@ -81,31 +93,34 @@ const SearchScreen = () => {
                 style = {{flexDirection:'row',width:"100%"}}
                 >
                     <Image 
-                    source = {item.image}
+                    source = {{uri:item.ImageUrl}}
                     resizeMode="cover"
-                    style = {{width:60,height:60}}
+                    style = {{width:80,height:80}}
+                    PlaceholderContent={<ActivityIndicator />}
                     />
-                    <View style = {{paddingLeft:10,paddingTop:6,flexDirection:'column'}}>
-                        <Text>{item.title}</Text>
-                        {rating(item.rating)}
-                        <Text>{item.content}</Text>
+                    <View style = {{paddingLeft:10,paddingTop:6,flexDirection:'column',width:'75%'}}>
+                        <Text>{item.Title}</Text>
+                        {rating(item.Rating)}
+                        <Text
+                        numberOfLines ={2}
+                        style = {{fontSize:12}}
+                        >{item.Content}</Text>
                     </View>
                 </TouchableOpacity>
             </View>
         )
     }  
     return(
-        <ScrollView>
+        <ScrollView style={{backgroundColor:'white'}}>
             <View style ={styles.Container}>
                 {search? 
                 <View style ={styles.txtContent}>
                     <Text>
-                        Is searching, please wait...!
+                        Searching, please wait...!
                     </Text>
                 </View>
                 :
                 <View style ={styles.isSearch}>
-                    <Text style ={{fontSize:20,fontFamily:'Cochin',width:'90%',alignSelf:'center'}}>Result</Text>
                     <FlatList 
                     data = {currentData}
                     renderItem = {Items}
@@ -119,18 +134,21 @@ const SearchScreen = () => {
 
 const styles = StyleSheet.create({
     Container:{
-        flex:1
+        flex:1,
+        backgroundColor:'#FFF'
     },
     txtContent:{
         justifyContent:'center',
         alignItems:'center',
         paddingTop:10,
+        backgroundColor:'#FFF'
     },
     isSearch:{
         marginTop:16,
+        backgroundColor:'#FFF'
     },
     Containerlist:{
-        marginTop:10,
+        marginTop:2,
         justifyContent:'center',
         alignSelf:'center',
         width:"90%",
@@ -142,21 +160,10 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.5,
         shadowRadius: 3.75,
         elevation: 7,
-        backgroundColor:"#fff"
+        backgroundColor:"#fff",
+        marginBottom:10
     }
 })
 
-const data = [
-    {id:1,title:'Cake',content:'#Bánh ngọt #Bánh Chay',image:require('../../../../assets/image_1.jpg'),stylefood:'restaurent',rating:4},
-    {id:2,title:'Scone',content:'Bánh Mặn',image:require('../../../../assets/image_2.jpg'),stylefood:'restaurent',rating:2},
-    {id:3,title:'Fritters',content:'Bánh ngọt',image:require('../../../../assets/image_3.jpg'),stylefood:'restaurent',rating:5},
-    {id:4,title:'Cupcake',content:'Bánh ngọt',image:require('../../../../assets/image_4.jpg'),stylefood:'restaurent',rating:1},
-    {id:5,title:'Coffee cake',content:'Bánh Mặn',image:require('../../../../assets/image_5.jpg'),stylefood:'restaurent',rating:3},
-    {id:6,title:'Cake Donut',content:'Bánh ngọt',image:require('../../../../assets/image_6.jpg'),stylefood:'restaurent',rating:3},
-    {id:7,title:'Mousse',content:'Bánh Mặn',image:require('../../../../assets/image_7.jpg'),stylefood:'restaurent',rating:4},
-    {id:8,title:'Banh Pie',content:'Bánh Mặn',image:require('../../../../assets/image_8.jpg'),stylefood:'restaurent',rating:5},
-    {id:9,title:'Cheesecake',content:'Bánh ngọt',image:require('../../../../assets/image_9.jpg'),stylefood:'restaurent',rating:5},
-    {id:10,title:'Lean Yeast Bread',content:'Bánh ngọt',image:require('../../../../assets/image_10.jpg'),stylefood:'restaurent',rating:5},
-]
 
 export default SearchScreen;

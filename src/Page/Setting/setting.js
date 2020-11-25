@@ -14,7 +14,7 @@ return(
         name = "Profile" 
         component = {Profile}
         options ={{
-            title:"Giỏ Hàng",
+            title:"Setting && Profile",
             headerStyle :{
                 elevation: 0,
                 shadowOpacity: 0,

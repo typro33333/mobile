@@ -3,7 +3,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Cast from './cast';
 import Info from './info';
 import Complete from './complete';
-
+import Detailcast from './detailcast';
 const Stack = createStackNavigator();
 
 const CreateHomeChild = () => {
@@ -32,6 +32,17 @@ return(
             title : "Information"
         }}
         />
+        <Stack.Screen 
+        name = "DetailCast" 
+        component = {Detailcast} 
+        options ={({}) => ({
+            headerBackTitleVisible:false,
+            headerTitle:false,
+            headerTransparent:true,
+            headerTintColor:"#FFF"
+        })}
+        />
+
         <Stack.Screen name = "Complete" component = {Complete}/>
     </Stack.Navigator>  
     )

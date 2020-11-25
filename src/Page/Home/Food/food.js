@@ -1,14 +1,14 @@
 import React, { useEffect } from 'react';
 import { 
   View,
-  Button,
   StyleSheet, 
-  Image ,
   Text ,
   ScrollView ,
   TouchableOpacity,
   RefreshControl,
-  StatusBar
+  StatusBar,
+  ActivityIndicator,
+  Image
  } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Swiper from 'react-native-swiper';
@@ -16,6 +16,8 @@ import { FlatList } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { LogBox } from 'react-native';
 import {rating} from '../../../Component/Star_rating/star';
+import axios from 'axios';
+import {Image as Imagelement} from 'react-native-elements';
 const wait = (timeout) => {
   return new Promise(resolve => {
     setTimeout(resolve, timeout);
@@ -25,6 +27,7 @@ const wait = (timeout) => {
 const Food = () =>  {
   const navigation = useNavigation();
 
+  const [data,setData] = React.useState([]);
   const [refreshing, setRefreshing] = React.useState(false);
 
   const onRefresh = React.useCallback(() => {
@@ -49,6 +52,16 @@ const Food = () =>  {
     ),
   })},[navigation])
   
+  React.useEffect(()=>{
+    async function getdata(){
+        const url = 'http://tdtsv.ddns.net:8000/topRecent/getAllItem';
+        const res = await axios.get(url)
+        const resjson = await res.data;
+        setData(resjson);
+    }
+    getdata();
+  },[])
+
   const Card = ({item,index}) => {
     return(
             <TouchableOpacity 
@@ -68,11 +81,12 @@ const Food = () =>  {
             shadowRadius: 2,
             elevation: 5
             }}>
-              <Image 
+              <Imagelement 
               key = {index}
-              source= {item.image}
+              source= {{uri:item.ImageUrl}}
               resizeMode ="cover"
               style = {styles.cardImage}
+              PlaceholderContent = {<ActivityIndicator/>}
               />
               <View style = {{flex:1,flexDirection:'column',marginLeft:8}}>
                 <TouchableOpacity 
@@ -80,12 +94,14 @@ const Food = () =>  {
                 style = {{flexDirection:'row',width:"100%"}}
                 > 
                   <Text style = {styles.titleCard}>
-                  {item.title}
+                  {item.Title}
                   </Text>
                 </TouchableOpacity>
-                {rating(item.rating)}
-                <Text style ={{marginTop:4,width:"95%"}}>
-                {item.content}
+                {rating(item.Rating)}
+                <Text 
+                numberOfLines = {3}
+                style ={{marginTop:4,width:"95%"}}>
+                {item.Content}
                 </Text>
               </View>
             </TouchableOpacity>
@@ -130,7 +146,7 @@ const Food = () =>  {
         <View style={styles.categoryContainer}>
           <TouchableOpacity 
           style={styles.categoryBtn} 
-          onPress = {()=> navigation.navigate('ListFood',{title:'Restaurent Foods',stylefood:'restaurent'})}>
+          onPress = {()=> navigation.navigate('ListFood',{title:'Restaurent Foods',stylefood:'restaurant'})}>
             <View style={styles.categoryIcon}>
               <Image 
               source ={require('../../../../assets/food.png')}
@@ -170,7 +186,7 @@ const Food = () =>  {
         <View style={styles.categoryContainer}>
         <TouchableOpacity 
         style={styles.categoryBtn}
-        onPress = {()=> navigation.navigate('ListFood',{title:'Fruits',stylefood:'Fruits'})}
+        onPress = {()=> navigation.navigate('ListFood',{title:'Fruits',stylefood:'fruits'})}
         >
           <View style={styles.categoryIcon}>
             <Image 
@@ -183,7 +199,7 @@ const Food = () =>  {
         </TouchableOpacity>
         <TouchableOpacity 
         style={[styles.categoryBtn,{marginLeft:20}]}
-        onPress = {()=> navigation.navigate('ListFood',{title:'Drinks',stylefood:'Drinks'})}
+        onPress = {()=> navigation.navigate('ListFood',{title:'Drinks',stylefood:'drinks'})}
         >
           <View style={styles.categoryIcon}>
             <Image 
@@ -225,47 +241,6 @@ const Food = () =>  {
     </View>
     );
 }
-
-const data = [
-{
-  id:1,
-  image:require('../../../../assets/image_1.jpg'), 
-  title:'Tiramisu', 
-  content: 'Tiramisu là loại bánh ngọt tráng miệng vị cà phê rất nổi tiếng của Italy bột cacao...',
-  rating:3,
-  stylefood:'restaurent',
-  price:34000
-},
-{
-  id:2,
-  image:require('../../../../assets/image_5.jpg'), 
-  title:'Coffee Cake', 
-  content: 'Coffee Cake là loại bánh ngọt tráng miệng vị cà phê rất nổi tiếng của American bột cacao...',
-  rating:5,
-  stylefood:'restaurent',
-  price:92200
-},
-{
-  id:3,
-  image:require('../../../../assets/image_7.jpg'), 
-  title:'Coffe Cake', 
-  content: '- Coffe Cake is cake consisting of broth, rice noodles, herbs, and meat.',
-  rating:3,
-  stylefood:'restaurent',
-  price:45301
-},
-{
-  id:4,
-  image:require('../../../../assets/image_6.jpg'), 
-  title:'Donuot', 
-  content: '- Donuot is consisting of broth, rice noodles, herbs, and meat.',
-  rating:2,
-  stylefood:'restaurent',
-  price:23400
-}
-];
-
-
 
 const styles = StyleSheet.create({
   container:{

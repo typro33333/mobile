@@ -2,7 +2,7 @@ import * as React from 'react';
 import {View,Text,StyleSheet, Image,AsyncStorage, Button } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import * as ImagePicker from 'expo-image-picker';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons,AntDesign } from '@expo/vector-icons';
 import {useNavigation,useRoute} from '@react-navigation/native';
 export default function Profile(){
     const navigation = useNavigation();
@@ -16,7 +16,12 @@ export default function Profile(){
           alert("Permission to access camera roll is required!");
           return;
         }
-        let pickerResult = await ImagePicker.launchImageLibraryAsync();
+        let pickerResult = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.All,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+        });
         await AsyncStorage.setItem("My_image",pickerResult.uri);
         getData();
     }
@@ -77,19 +82,58 @@ export default function Profile(){
                         }
                         </TouchableOpacity>
                     </View>
-                    <View style = {{marginLeft:10}}>
-
+                    <View style = {{marginLeft:14,marginTop:10,width:"70%"}}>
+                        <View style ={{flexDirection:'column'}}>
+                            <View style ={{flexDirection:'row'}}>
+                                <Text>Thái Hoàng Thịnh</Text>
+                                <TouchableOpacity 
+                                onPress ={()=>{}}
+                                style ={{marginLeft:10}} >
+                                    <AntDesign name="edit" size={18} color="black" />
+                                </TouchableOpacity>
+                            </View>
+                            <View style={{marginTop:24}}>
+                                <Text>Số người the dõi: 1000</Text>
+                            </View>
+                            <View>
+                                <Text>Số Bài Viết: 1000</Text>
+                            </View>
+                        </View>
                     </View>
                 </View>
             </View>
-            <View style ={{alignContent:'center',justifyContent:'center',flexDirection:'column'}}>
+            <View style ={{flexDirection:'column',backgroundColor:'#FFF',marginTop:10}}>
+                <TouchableOpacity 
+                onPress = {()=>navigation.navigate('New Product')}
+                style ={{borderBottomWidth:0.5,borderTopWidth:0.5}}>
+                    <View 
+                    style ={{margin:14}}>
+                        <Text style={{fontSize:16,color:'#2478FF'}}>New Product</Text>
+                    </View>
+                </TouchableOpacity>
+                <View style ={{borderBottomWidth:0.5}}>
+                    <Button
+                    title = 'Manage Post'
+                    onPress = {() => navigation.navigate('New Product')}
+                    />
+                </View>
+                <View style ={{borderBottomWidth:0.5}}>
+                    <Button
+                    title = 'General New Promotion%'
+                    onPress = {() => navigation.navigate('New Product')}
+                    />
+                </View>
                 <Button
-                title = 'New Product'
+                title = 'Orders not yet delivered'
                 onPress = {() => navigation.navigate('New Product')}
                 />
                 <Button
-                title = 'remove asyncStronge'
-                onPress = {() => removeAsyncStronge()}
+                title = 'History Complete'
+                onPress = {() => navigation.navigate('New Product')}
+                />
+                <Button
+                title = 'Remove asyncStronge'
+                onPress = {() => removeAsyncStronge('My_image')}
                 />
             </View>
         </View>

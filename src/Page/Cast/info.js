@@ -1,15 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet ,Button} from 'react-native';
+import { Text, View, StyleSheet ,Button, ScrollView,KeyboardAvoidingView,Platform} from 'react-native';
 import * as Location from 'expo-location';
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation,useRoute } from "@react-navigation/native";
 import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
 import { ActivityIndicator } from 'react-native';
 import { Input } from 'react-native-elements';
+import { AntDesign,MaterialCommunityIcons,FontAwesome } from '@expo/vector-icons';
+import { SimpleLineIcons } from '@expo/vector-icons';
+
+
 export default function Info() {
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
-  const [loading,setLoading] = useState(true)
+  const route = useRoute();
   const navigation = useNavigation();
+  const date = new Date();
+  const datenow = (date.getDate()+"/"+(Number(date.getMonth())+1))+"/"+ date.getFullYear();
+  const [loading,setLoading] = useState(true)
+  
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestPermissionsAsync();
@@ -46,7 +54,12 @@ export default function Info() {
 
   return (
     <View style={[styles.container,{backgroundColor:"#FFF"}]}>
-      <View style={{flex:1,flexDirection:'column'}}>
+      <KeyboardAvoidingView
+      behavior={Platform.OS == "ios" ? "padding" : "height"}
+      keyboardVerticalOffset = {Platform.OS === 'ios' ? 100 : 0}
+      style ={{flex:1}}
+      >
+      <ScrollView style={{flexDirection:'column'}}>
         {loading? 
         <View style = {{
           height:300,
@@ -73,28 +86,44 @@ export default function Info() {
             </MapView>
         </View>}
         <View style ={{width:"90%",alignSelf:'center',marginTop:20,backgroundColor:'#FFF'}}>
-          <View >
+        <Input
+          label = 'Your Name'
+          placeholder='Nguyễn Văn A'
+          leftIcon ={<AntDesign name="idcard" size={24} color="black" />}
+        />
+        <Input
+          label = 'Phone'
+          placeholder='0988844440'
+          leftIcon ={<MaterialCommunityIcons name="cellphone" size={24} color="black" />}
+        />
+        <Input
+          label = 'Order Day'
+          value = {datenow}
+          leftIcon ={<MaterialCommunityIcons name="calendar-today" size={24} color="black" />}
+        />
+        <Input
+          label = 'Received Date'
+          placeholder={datenow}
+          leftIcon = {<FontAwesome name="calendar-check-o" size={22} color="black" />}
+        />
           <Input
-            placeholder='Your Name'
+            label = "Note"
+            placeholder='Some thing...'
+            leftIcon = {<SimpleLineIcons name="note" size={24} color="black" />}
           />
+        </View>
+        <View style ={{width:"90%",alignSelf:'center',marginTop:10,backgroundColor:'#008FD4',marginBottom:30,borderRadius:100}}>
+          <View style ={{justifyContent:'center',flexDirection:'row'}}>
+            <AntDesign name="shoppingcart" size={24} color="#FFF" style={{marginTop:8}}/>
+            <Button 
+            title ="Xác Nhận Đặt Hàng"
+            color ="white"
+            onPress ={()=>{}}
+            />
           </View>
-        <Input
-          value ='Ngày Đặt Hàng'
-        />
-        <Input
-          placeholder='Ngày Nhận Hàng'
-        />
-        <Input
-          placeholder='Ghi Chú'
-        />
         </View>
-        <View style ={{width:"90%",alignSelf:'center',marginTop:20,backgroundColor:'#008FD4'}}>
-          <Button 
-          title ="Xác Nhận Đặt Hàng"
-          color ="white"
-          />
-        </View>
-      </View>
+      </ScrollView>
+      </KeyboardAvoidingView>
     </View>
   );
 }
