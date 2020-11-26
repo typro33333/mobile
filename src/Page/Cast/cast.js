@@ -32,7 +32,7 @@ const Cart = () =>  {
         setData(resjson);
       }
       getdata();
-    },300);
+    },1000);
   })
 
   const deleteFood = async(id) => {
@@ -67,7 +67,13 @@ const Cart = () =>  {
       setCheck(false)
     }
   }
+  const getotalPromotion = (value) => {
+    if(value ===0){
+      return
+    }else{
 
+    }
+  }
   const card = ({item,index}) => {
     return(
       <View 
@@ -235,14 +241,15 @@ const Cart = () =>  {
             style ={{alignItems:'flex-end',justifyContent:'center'}}>
               <View style ={{flexDirection:'row',marginRight:8}}>
                 <Text style ={{color:'#A3A3A3',fontSize:13}}>{promotion} </Text>
+
                 <AntDesign name="right" size={16} color="#A3A3A3" style={{marginTop:1}}/>
               </View>
             </TouchableOpacity>
           </View>
-          <View style ={{height:50,width:'100%',backgroundColor:'white',borderTopWidth:0.6,borderColor:'#F0F0F0'}}>
+          <View style ={{height:53,width:'100%',backgroundColor:'white',borderTopWidth:0.6,borderColor:'#F0F0F0'}}>
             <View style ={{flexDirection:'row-reverse',height:'100%'}}>
               <TouchableOpacity
-              onPress = {()=> navigation.navigate('Info',{data})}
+              onPress = {()=> navigation.navigate('Info',{data,value})}
               style ={{width:100,backgroundColor:'#FE6B47',justifyContent:'center'}}
               >
                 <View style ={{alignItems:'center'}}>
@@ -251,13 +258,25 @@ const Cart = () =>  {
               </TouchableOpacity>
               <View style ={{marginRight:10,justifyContent:'center'}}>
                 <View style ={{flexDirection:'row'}}>
-                  <Text style ={{fontSize:16,fontWeight:'500'}}>Tổng Tiền: </Text>
-                  <Text style ={{textDecorationLine:'underline',color:'#FE6B47',fontWeight:'700',marginHorizontal:1}}>đ</Text>
-                  <Text style ={{color:'#FE6B47',fontWeight:'700'}}>{Number(total-(value/100*total))}</Text>
+                  <View style ={{flexDirection:'column'}}>
+                    <Text style ={{fontSize:16,fontWeight:'500'}}>Tổng Tiền: </Text>
+                    <Text style ={{fontSize:14,fontWeight:'500',marginLeft:18}}>Đã Giảm: </Text>
+                  </View>
+                  <View>
+                    <View style ={{flexDirection:'row'}}>
+                      <Text style ={{textDecorationLine:'underline',color:'#FE6B47',fontWeight:'700',marginHorizontal:1}}>đ</Text>
+                      <Text style ={{color:'#FE6B47',fontWeight:'700'}}>{Number(total-(value/100*total))}</Text>
+                    </View>
+                    <View style ={{flexDirection:'row'}}>
+                      <Text style ={{textDecorationLine:'underline',color:'#FE6B47',fontWeight:'700',marginHorizontal:1}}>đ</Text>
+                      <Text style ={{color:'#FE6B47',fontWeight:'700'}}>{Number((value/100*total))}</Text>
+                      <Text style ={{color:'#FE6B47',fontWeight:'400',fontSize:10}}>{'('+value+'%)'}</Text>
+                    </View>
+                  </View>
                 </View>
               </View>
               <View style ={{justifyContent:'center',marginRight:10}}>
-                <FontAwesome5 name="coins" size={22} color="#FFC327" />
+                <FontAwesome5 name="coins" size={26} color="#FFC327" />
               </View>
             </View>
           </View>

@@ -3,6 +3,8 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Profile from './profile';
 import Product_placed from './product_placed';
 import New_product from './new_product';
+import ManagePost from './managepost';
+import Promotion from './promotion';
 const Stack = createStackNavigator();
 
 const CreateHomeChild = () => {
@@ -34,6 +36,16 @@ return(
         <Stack.Screen 
         name = "New Product" 
         component = {New_product}
+        />
+
+        <Stack.Screen 
+        name = "Managepost" 
+        component = {ManagePost}
+        />
+
+        <Stack.Screen 
+        name = "Promotion" 
+        component = {Promotion}
         />
     </Stack.Navigator>  
     )

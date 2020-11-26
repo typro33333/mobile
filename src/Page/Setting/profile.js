@@ -4,6 +4,8 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons,AntDesign } from '@expo/vector-icons';
 import {useNavigation,useRoute} from '@react-navigation/native';
+import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 export default function Profile(){
     const navigation = useNavigation();
     const route = useRoute();
@@ -102,40 +104,79 @@ export default function Profile(){
                     </View>
                 </View>
             </View>
-            <View style ={{flexDirection:'column',backgroundColor:'#FFF',marginTop:10}}>
+            <View style ={{flexDirection:'column',backgroundColor:'#FFF',marginTop:4}}>
                 <TouchableOpacity 
                 onPress = {()=>navigation.navigate('New Product')}
-                style ={{borderBottomWidth:0.5,borderTopWidth:0.5}}>
-                    <View 
-                    style ={{margin:14}}>
-                        <Text style={{fontSize:16,color:'#2478FF'}}>New Product</Text>
+                style ={{borderBottomWidth:0.5,borderColor:'#B6B6B6'}}>
+                    <View
+                    style ={{margin:14,flexDirection:'row',justifyContent:'space-between'}}>
+                        <View style={{flexDirection:'row',justifyContent:'center'}}>
+                            <Ionicons name="ios-create" size={26} color="#A4A4A4" />
+                            <Text style={{fontSize:16,color:'#524F4F',marginTop:4,marginLeft:10,fontWeight:'500'}}>New Product</Text>
+                        </View>
+                        <View style={{alignItems:'flex-end',justifyContent:'center',marginTop:3}}>
+                            <MaterialIcons name="navigate-next" size={26} color="black" />
+                        </View>
                     </View>
                 </TouchableOpacity>
-                <View style ={{borderBottomWidth:0.5}}>
-                    <Button
-                    title = 'Manage Post'
-                    onPress = {() => navigation.navigate('New Product')}
-                    />
-                </View>
-                <View style ={{borderBottomWidth:0.5}}>
-                    <Button
-                    title = 'General New Promotion%'
-                    onPress = {() => navigation.navigate('New Product')}
-                    />
-                </View>
-                <Button
-                title = 'Orders not yet delivered'
-                onPress = {() => navigation.navigate('New Product')}
-                />
-                <Button
-                title = 'History Complete'
-                onPress = {() => navigation.navigate('New Product')}
-                />
-                <Button
-                title = 'Remove asyncStronge'
+                <TouchableOpacity 
+                onPress = {()=>navigation.navigate('Managepost')}
+                style ={{borderBottomWidth:0.5,borderColor:'#B6B6B6'}}>
+                    <View
+                    style ={{margin:14,flexDirection:'row',justifyContent:'space-between'}}>
+                        <View style={{flexDirection:'row',justifyContent:'center'}}>
+                            <MaterialCommunityIcons name="food" size={26} color="#A4A4A4" />
+                            <Text style={{fontSize:16,color:'#524F4F',marginTop:4,marginLeft:8,fontWeight:'500'}}>Manage Post</Text>
+                        </View>
+                        <View style={{alignItems:'flex-end',justifyContent:'center',marginTop:3}}>
+                            <MaterialIcons name="navigate-next" size={26} color="black" />
+                        </View>
+                    </View>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                onPress = {()=>navigation.navigate('Promotion')}
+                style ={{borderBottomWidth:0.5,borderColor:'#B6B6B6'}}>
+                    <View
+                    style ={{margin:14,flexDirection:'row',justifyContent:'space-between'}}>
+                        <View style={{flexDirection:'row',justifyContent:'center'}}>
+                            <MaterialCommunityIcons name="sale" size={26} color="#A4A4A4" />
+                            <Text style={{fontSize:16,color:'#524F4F',marginTop:4,marginLeft:8,fontWeight:'500'}}>Create new promotion%</Text>
+                        </View>
+                        <View style={{alignItems:'flex-end',justifyContent:'center',marginTop:3}}>
+                            <MaterialIcons name="navigate-next" size={26} color="black" />
+                        </View>
+                    </View>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                onPress = {()=>navigation.navigate('Product_is_placed')}
+                style ={{borderBottomWidth:0.5,borderColor:'#B6B6B6'}}>
+                    <View
+                    style ={{margin:14,flexDirection:'row',justifyContent:'space-between'}}>
+                        <View style={{flexDirection:'row',justifyContent:'center'}}>
+                            <MaterialCommunityIcons name="truck-delivery" size={26} color="#A4A4A4"/>
+                            <Text style={{fontSize:16,color:'#524F4F',marginTop:4,marginLeft:8,fontWeight:'500'}}>Order not yet delivered</Text>
+                        </View>
+                        <View style={{alignItems:'flex-end',justifyContent:'center',marginTop:3}}>
+                            <MaterialIcons name="navigate-next" size={26} color="black" />
+                        </View>
+                    </View>
+                </TouchableOpacity>
+                <TouchableOpacity 
                 onPress = {() => removeAsyncStronge('My_image')}
-                />
+                style ={{borderBottomWidth:0.5,borderColor:'#B6B6B6'}}>
+                    <View
+                    style ={{margin:14,flexDirection:'row',justifyContent:'space-between'}}>
+                        <View style={{flexDirection:'row',justifyContent:'center'}}>
+                            <MaterialCommunityIcons name="logout" size={26} color="#A4A4A4" />
+                            <Text style={{fontSize:16,color:'#524F4F',marginTop:4,marginLeft:8,fontWeight:'500'}}>Log out</Text>
+                        </View>
+                        <View style={{alignItems:'flex-end',justifyContent:'center',marginTop:3}}>
+                            <MaterialIcons name="navigate-next" size={26} color="black" />
+                        </View>
+                    </View>
+                </TouchableOpacity>
             </View>
+            
         </View>
     )
 }

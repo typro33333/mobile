@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet ,Button, ScrollView,KeyboardAvoidingView,Platform} from 'react-native';
+import { Text, View, StyleSheet ,Button, ScrollView,KeyboardAvoidingView,Platform, StatusBar} from 'react-native';
 import * as Location from 'expo-location';
 import { useNavigation,useRoute } from "@react-navigation/native";
 import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
@@ -13,24 +13,29 @@ export default function Info() {
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const route = useRoute();
-  console.log(route.params.data)
+  const code = route.params.value
   const navigation = useNavigation();
   const date = new Date();
   const datenow = (date.getDate()+"/"+(Number(date.getMonth())+1))+"/"+ date.getFullYear();
   const [loading,setLoading] = useState(true)
-  
+  const [UserName,setUserName] = useState();
+  const [Phone,setPhone] =useState();
+  const [RecieveDate,setRecieveDate] =useState();
+  const [Destination,setDestination] = useState();
+  const [note,setNote] =useState();
   const purchase = async()  => {
     const url = 'http://tdtsv.ddns.net:8000/bag/purchase';
     const data = {
       data:route.params.data,
-      code: "string",
-      UserName: "string",
-      Phone:"string",
-      OrderDate: "string",
-      RecieveDate: "string",
-      Destination: "string",
-      note:"string"
+      code: code,
+      UserName: UserName,
+      Phone:Phone,
+      OrderDate: datenow,
+      RecieveDate: RecieveDate,
+      Destination: Destination,
+      note:note
     }
+    console.log(data)
     const res = await fetch(url,{
       method:'POST',
       body:JSON.stringify(data)
@@ -47,6 +52,7 @@ export default function Info() {
 
       let location = await Location.getCurrentPositionAsync({});
       setLocation(location);
+      setDestination(location.coords.latitude+"#"+location.coords.longitude)
       setLoading(false);
     })();
   },[]);
@@ -74,6 +80,7 @@ export default function Info() {
 
   return (
     <View style={[styles.container,{backgroundColor:"#FFF"}]}>
+      <StatusBar/>
       <KeyboardAvoidingView
       behavior={Platform.OS == "ios" ? "padding" : "height"}
       keyboardVerticalOffset = {Platform.OS === 'ios' ? 100 : 0}
@@ -107,11 +114,13 @@ export default function Info() {
         </View>}
         <View style ={{width:"90%",alignSelf:'center',marginTop:20,backgroundColor:'#FFF'}}>
         <Input
+        onChangeText ={(text)=>setUserName(text)}
           label = 'Your Name'
           placeholder='Nguyễn Văn A'
           leftIcon ={<AntDesign name="idcard" size={24} color="black" />}
         />
         <Input
+        onChangeText ={(text)=>setPhone(text)}
           label = 'Phone'
           placeholder='0988844440'
           leftIcon ={<MaterialCommunityIcons name="cellphone" size={24} color="black" />}
@@ -122,11 +131,13 @@ export default function Info() {
           leftIcon ={<MaterialCommunityIcons name="calendar-today" size={24} color="black" />}
         />
         <Input
+          onChangeText ={(text)=>setRecieveDate(text)}
           label = 'Received Date'
           placeholder={datenow}
           leftIcon = {<FontAwesome name="calendar-check-o" size={22} color="black" />}
         />
           <Input
+            onChangeText ={(text)=>setNote(text)}
             label = "Note"
             placeholder='Some thing...'
             leftIcon = {<SimpleLineIcons name="note" size={24} color="black" />}
