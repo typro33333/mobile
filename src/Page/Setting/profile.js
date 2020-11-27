@@ -162,6 +162,20 @@ export default function Profile(){
                     </View>
                 </TouchableOpacity>
                 <TouchableOpacity 
+                onPress = {()=>navigation.navigate('Product_is_placed')}
+                style ={{borderBottomWidth:0.5,borderColor:'#B6B6B6'}}>
+                    <View
+                    style ={{margin:14,flexDirection:'row',justifyContent:'space-between'}}>
+                        <View style={{flexDirection:'row',justifyContent:'center'}}>
+                            <MaterialCommunityIcons name="history" size={26} color="#A4A4A4" />
+                            <Text style={{fontSize:16,color:'#524F4F',marginTop:4,marginLeft:8,fontWeight:'500'}}>History orders</Text>
+                        </View>
+                        <View style={{alignItems:'flex-end',justifyContent:'center',marginTop:3}}>
+                            <MaterialIcons name="navigate-next" size={26} color="black" />
+                        </View>
+                    </View>
+                </TouchableOpacity>
+                <TouchableOpacity 
                 onPress = {() => removeAsyncStronge('My_image')}
                 style ={{borderBottomWidth:0.5,borderColor:'#B6B6B6'}}>
                     <View
@@ -176,7 +190,6 @@ export default function Profile(){
                     </View>
                 </TouchableOpacity>
             </View>
-            
         </View>
     )
 }

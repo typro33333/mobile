@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet ,Button, ScrollView,KeyboardAvoidingView,Platform, StatusBar} from 'react-native';
+import { Text, View, StyleSheet ,Button, ScrollView,KeyboardAvoidingView,Platform, StatusBar, TouchableOpacity} from 'react-native';
 import * as Location from 'expo-location';
 import { useNavigation,useRoute } from "@react-navigation/native";
 import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
@@ -145,12 +145,10 @@ export default function Info() {
         </View>
         <View style ={{width:"90%",alignSelf:'center',marginTop:10,backgroundColor:'#008FD4',marginBottom:30,borderRadius:100}}>
           <View style ={{justifyContent:'center',flexDirection:'row'}}>
-            <AntDesign name="shoppingcart" size={24} color="#FFF" style={{marginTop:8}}/>
-            <Button 
-            title ="Xác Nhận Đặt Hàng"
-            color ="white"
-            onPress ={()=>purchase()}
-            />
+            <AntDesign name="shoppingcart" size={24} color="#FFF" style={{marginTop:5,marginBottom:5}}/>
+            <TouchableOpacity style={{marginLeft:6,marginTop:6}}>
+              <Text style={{fontSize:16,color:'#FFF'}}>Xác Nhận Đặt Hàng</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </ScrollView>

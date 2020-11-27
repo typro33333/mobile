@@ -16,7 +16,7 @@ return(
         name = "Profile" 
         component = {Profile}
         options ={{
-            title:"Setting && Profile",
+            title:"Profile",
             headerStyle :{
                 elevation: 0,
                 shadowOpacity: 0,
@@ -29,7 +29,7 @@ return(
         name = "Product_is_placed" 
         component = {Product_placed}
         options ={{
-            title : "Product_is_placed"
+            title : "Orders"
         }}
         />
 
