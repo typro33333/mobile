@@ -20,7 +20,6 @@ const ListFood = () => {
         })
     }
     let {title,stylefood} = route.params;
-    console.log(stylefood)
     const [data,setData] = React.useState([]);
     React.useEffect(()=> {
         navigation.setOptions({

@@ -1,28 +1,97 @@
 import * as React from 'react';
-import {View,Text,StyleSheet, ScrollView, ActivityIndicator, FlatList} from 'react-native';
+import {View,Text,StyleSheet, ScrollView, ActivityIndicator, FlatList,Button,Image as ImageReact} from 'react-native';
 import axios from 'axios';
 import { TouchableOpacity } from 'react-native';
-import { AntDesign } from '@expo/vector-icons';
 import { Image } from 'react-native-elements';
-import { FontAwesome } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons,Entypo } from '@expo/vector-icons';
+import { Dialog } from 'react-native-simple-dialogs';
+import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
+import {useNavigation} from '@react-navigation/native';
 export default function Product_place(){
+    const navigation = useNavigation();
     const [trigger,setTrigger] = React.useState(false);
-    const [data,setData] = React.useState();
+    const [loading,setloading] =React.useState(false);
+    const [data,setData] = React.useState([]);
+    const [open,setOpen] = React.useState(false);
+    const [open1,setOpen1] = React.useState(false);
+    const [index,setIndex] = React.useState();
     React.useEffect(()=> {
-    async function getorderdata(){
+        getdata()
+    },[]);
+    
+    React.useEffect(()=> {
+        navigation.setOptions({
+            headerLeft:()=>(
+                <TouchableOpacity style = {{flex:1,flexDirection:'row'}} onPress = {()=> {navigation.goBack()}}>
+                    <Text style={{color:"#267EF9",marginLeft:20,marginTop:8,fontSize:18}}>Back</Text>
+                </TouchableOpacity>
+            ),
+        })
+    },[navigation]);
+
+    const location = (data,type,index) => {
+        const latitude = data[index].Destination.split('#')
+        if(type === 1){
+            return latitude[0]
+        }
+        else if(type === 2){
+            return latitude[1]
+        }
+    }
+    const notData = (data) => {
+        if(data.length === 0){
+            return(
+                <View style={{flex:1,alignSelf:'center',justifyContent:'center'}}>
+                    <View style ={{flexDirection:'row'}}>
+                        <ImageReact 
+                        source ={require('../../../assets/sad.png')}
+                        resizeMode='cover'
+                        style ={{height:24,width:24}}
+                        />
+                        <Text style ={{marginTop:2,marginLeft:10,fontSize:15,fontWeight:'600'}}>Không có Đơn Đặt Hàng Nào!</Text>
+                    </View>
+                </View>
+            )
+        }else{
+            return(<View></View>)
+        }
+    }
+
+    const getdata = async() => {
         const url = 'http://tdtsv.ddns.net:8000/order_handler/getAllItem';
         const res = await axios.get(url);
         const resjson = res.data;
         resjson.forEach(element => {
-            element.active = false
+            element.active = true
         });
+        setloading(true)
         setData(resjson);
-        }
-        getorderdata();
-    },[]);
-    
+    }
+
+    const cancelOrder = async(data,index) => {
+        const url = 'http://tdtsv.ddns.net:8000/order_handler/cancellOrder'+data[index].OrderId;
+        const res = await axios.get(url)
+        .catch(function (error) {
+            if (error.response) {
+              console.log(error.response.status);
+            }
+        });
+        getdata();
+        setOpen(false);
+    }
+
+    const doneOrder = async(data,index) => {
+        const url = 'http://tdtsv.ddns.net:8000/order_handler/doneOrder'+data[index].OrderId;
+        const res = await axios.get(url)
+        .catch(function (error) {
+            if (error.response) {
+              console.log(error.response.status);
+            }
+        });
+        getdata();
+    }
+
     const Price = (data,index) => {
         let total = 0;
         for(var i=0;i<data[index].data.length;i++){
@@ -33,7 +102,8 @@ export default function Product_place(){
 
     const Totalprice = (data,index) => {
         let total = 0;
-        let code = Number(data[index].code);
+        let rawcode = data[index].code;
+        let code = Number(rawcode.slice(2,4));
         if(isNaN(code) === true){
             code = 0
         }
@@ -71,25 +141,45 @@ export default function Product_place(){
         return(
             <View key={index} 
             style ={styles.containerCard}>
-                <View style ={[styles.txtorder]}>
-                    <View style={{alignSelf:'center',backgroundColor:'#FFF'}}>
-                        <Text style ={{fontSize:18,fontWeight:'500',marginTop:8}}>Order {index+1}</Text>
+                <View 
+                style={{alignSelf:'center'}}>
+                    <Text style ={{fontSize:18,fontWeight:'500',marginTop:8}}>Order {index+1}</Text>
+                </View>
+                <View style ={{flexDirection:"row",marginTop:14,marginLeft:12}}>
+                    <View style ={{height:120,width:120,borderWidth:1,borderRadius:4}}>
+                        <MapView 
+                            provider={PROVIDER_GOOGLE}
+                            style ={{flex:1}}
+                            region ={{
+                            latitude:Number(location(data,1,index)),
+                            longitude:Number(location(data,2,index)),
+                            latitudeDelta:0.00264195044303443,
+                            longitudeDelta:0.000142817690068
+                            }}>
+                            <MapView.Marker
+                            coordinate ={{
+                            latitude:10.868294761208908,
+                            longitude:106.69310430788435,
+                            }}
+                            a
+                            title='Here'
+                            description={"description"}
+                            />
+                        </MapView>
                     </View>
-                    <View style ={{flexDirection:'row'}}>
-                        <Ionicons name="ios-person" size={20} color="#858181" />
-                        <Text style ={[styles.txtdetail,{marginLeft:11}]}>Name: {item.UserName}</Text>
-                    </View>
-                    <View style ={{flexDirection:'row',marginLeft:2}}>
-                        <Ionicons name="ios-phone-portrait" size={24} color="#858181"/>
-                        <Text style ={[styles.txtdetail,{marginLeft:13}]}>Phone: {item.Phone}</Text>
-                    </View>
-                    <View style ={{flexDirection:'row',marginTop:8}}>
-                        <Ionicons name="ios-calendar" size={22} color="#858181" />
-                        <Text style ={[styles.txtdetail,{marginLeft:7}]}>Ngày oder: {item.OrderDate}</Text>
-                    </View>
-                    <View style ={{flexDirection:'row'}}>
-                        <Ionicons name="ios-checkmark" size={30} color="#858181" />
-                        <Text style ={[styles.txtdetail,{marginLeft:13}]}>Ngày giao: {item.RecieveDate}</Text>
+                    <View style ={[styles.txtorder]}>
+                        <View style ={{flexDirection:'row'}}>
+                            <Text style ={[styles.txtdetail]}>Name: {item.UserName}</Text>
+                        </View>
+                        <View style ={{flexDirection:'row',marginLeft:2,marginTop:6}}>
+                            <Text style ={[styles.txtdetail]}>Phone: {item.Phone}</Text>
+                        </View>
+                        <View style ={{flexDirection:'row',marginTop:20}}>
+                            <Text style ={[styles.txtdetail,{color:'#116DD7'}]}>Ngày oder: {item.OrderDate}</Text>
+                        </View>
+                        <View style ={{flexDirection:'row',marginLeft:1,marginTop:3}}>
+                            <Text style ={[styles.txtdetail,{color:'#EB4F42'}]}>Ngày giao: {item.RecieveDate}</Text>
+                        </View>
                     </View>
                 </View>
                 {item.active?
@@ -103,20 +193,28 @@ export default function Product_place(){
                     />
                 </View>
                 }
-                <View style ={{flexDirection:'row',justifyContent:'flex-end',borderTopWidth:0.7,marginTop:18,borderColor:'#858181'}}>
-                    <View style={{marginRight:20,marginTop:14,flexDirection:'column'}}>
-                        <Text>Price: {Price(data,index)}đ</Text>
-                        <Text>Sale: -{Price(data,index) * item.code/100}đ</Text>
-                        <Text style ={{color:'#FE6B47',fontSize:17,fontWeight:'700'}}>Total: {Totalprice(data,index)}đ</Text>
+                <View style ={{alignSelf:'center',borderWidth:0.7,marginTop:24,width:'88%',borderColor:'#C6C6C6'}}></View>
+                <View style ={{flexDirection:'row',marginTop:14,justifyContent:'space-between'}}>
+                    <View style={{marginLeft:20,marginTop:10,flexDirection:'column',justifyContent:'flex-start'}}>
+                        <Text style ={[styles.txttotal]}>Price </Text>
+                        <Text style ={[styles.txttotal]}>Sale </Text>
+                        <Text style ={[styles.txttotal]}>Total </Text>
+                    </View>
+                    <View style ={{marginRight:24,marginTop:10,alignItems:'flex-end'}}>
+                        <Text style ={[styles.txttotal,{color:'#B4B4B4',fontWeight:'700'}]}>{Price(data,index)}đ</Text>
+                        <Text style ={[styles.txttotal,{color:'#B4B4B4',fontWeight:'700'}]}>-{Price(data,index)*item.code/100}đ</Text>
+                        <Text style ={[styles.txttotal,{fontWeight:'700'}]}>{(Price(data,index)-Price(data,index) * item.code/100)}đ</Text>
                     </View>
                 </View>
                 <View style={{flexDirection:'row',justifyContent:'space-between',marginBottom:4,marginTop:10}}>
-                    <TouchableOpacity 
+                    <TouchableOpacity
+                    onPress ={()=>{setOpen(true),setIndex(index)}}
                     style ={[styles.btn,{backgroundColor:"#DB381E",marginLeft:10}]}>
                         <MaterialCommunityIcons name="delete" size={18} color="#FFF" />
                         <Text style ={{color:'#FFF',marginLeft:2}}>Hủy Đơn</Text>
                     </TouchableOpacity>
                     <TouchableOpacity 
+                    onPress ={()=>{setOpen1(true),doneOrder(data,index)}}
                     style ={[styles.btn,{backgroundColor:"#2D74E9",marginRight:10}]}>
                         <MaterialCommunityIcons name="truck-delivery" size={20} color="#FFF" />
                         <Text style ={{color:'#FFF',marginLeft:6}}>Đã Giao</Text>
@@ -144,19 +242,96 @@ export default function Product_place(){
                     PlaceholderContent ={<ActivityIndicator/>}
                     />
                 </View>
-                <View style ={{marginLeft:16}}>
-                    <Text>{item.Title}</Text>
-                    <Text>{item.Price}</Text>
-                    <Text>Quantity: {item.quantity}</Text>
-                    <Text>FoodType: {item.FoodType}</Text>
+                <View style ={{marginLeft:16,flexDirection:'column'}}>
+                    <View style={{flexDirection:'row'}}>
+                        <Text style ={{fontSize:16,fontWeight:'600',color:'#8B8B8B'}}>{item.Title} </Text>
+                        <Text style ={{fontSize:12.5,marginTop:2,marginLeft:4}}>{item.Rating}
+                            <Entypo 
+                            name="star" 
+                            size={13} 
+                            style ={{marginTop:0}} 
+                            color="#FDCC0D" 
+                            />
+                        </Text>
+                    </View>
+                    <View style ={{marginTop:16}}>
+                        <Text>Số lượng: {item.quantity}</Text>
+                        <Text style ={{color:'#FE6B47',fontWeight:'600'}}>Giá: {item.Price}đ</Text>
+                    </View>
                 </View>
             </View>
         )
     }
 
     return(
-        <View style = {{flex:1,backgroundColor:'#FFF'}}>
-            <ScrollView style ={{backgroundColor:'#FFF',flex:1}}>
+        <View style = {{flex:1}}>
+            {loading?
+            <View></View>
+            :
+            <View style ={{alignSelf:'center',justifyContent:'center',marginTop:10}}>
+                <ActivityIndicator size={30}/>
+            </View>}
+            {notData(data)}
+            <Dialog
+            visible={open}
+            title="Xác Nhận"
+            onTouchOutside={() => setOpen(false)} 
+            buttons = {
+            <View style={{flexDirection:'row',justifyContent:'space-between'}}>
+                <View style ={{margin:14}}>
+                    <Button title ="Hủy" onPress ={() =>setOpen(false)}/>
+                </View>
+                <View style ={{margin:14}}>
+                    <Button title ="Ừm" onPress ={() =>{cancelOrder(data,index)}}/>
+                </View>
+            </View>} 
+            >
+            <View style ={{alignSelf:'center',marginTop:10}}>
+                <Text>Tính không giao hàng à!. Hủy đơn là mất khách đó</Text>
+            </View>
+            </Dialog>
+            <Dialog
+            visible={open1}
+            title="Xác Nhận"
+            onTouchOutside={() => setOpen1(false)} 
+            buttons = {
+            <View style={{flexDirection:'row',justifyContent:'space-between'}}>
+                <View style ={{margin:14}}>
+                </View>
+                <View style ={{margin:14}}>
+                    <Button title ="Oke" onPress ={() =>setOpen1(false)}/>
+                </View>
+            </View>} 
+            >
+            <View style ={{alignSelf:'center',marginTop:10}}>
+                <View style ={{justifyContent:'center'}}>
+                    <View style ={{flexDirection:'row'}}>
+                        <ImageReact 
+                        source ={require('../../../assets/fire-cracker.png')}
+                        resizeMode ='cover'
+                        style ={{height:20,width:20,marginLeft:10}}
+                        />
+                        <ImageReact 
+                        source ={require('../../../assets/fire-cracker.png')}
+                        resizeMode ='cover'
+                        style ={{height:20,width:20}}
+                        />
+                        <View style ={{marginLeft:10,marginRight:10}}><Text>Giao Hàng Thành Công.</Text></View>
+                        <ImageReact 
+                        source ={require('../../../assets/fire-cracker.png')}
+                        resizeMode ='cover'
+                        style ={{height:20,width:20}}
+                        />
+                        <ImageReact 
+                        source ={require('../../../assets/fire-cracker.png')}
+                        resizeMode ='cover'
+                        style ={{height:20,width:20}}
+                        />
+                    </View>
+                </View>
+            </View>
+            </Dialog>
+            <ScrollView style ={{flex:1}}>
                 <FlatList 
                 data = {data}
                 renderItem = {ContainerItem}
@@ -172,16 +347,17 @@ const styles = StyleSheet.create({
         borderWidth:0.5,
         alignSelf:'center',
         width:"95%",
-        marginTop:14,
+        marginTop:6,
         borderRadius:11,
-        borderColor:'#C6C6C6'
+        borderColor:'#C6C6C6',
+        backgroundColor:'#FFF'
     },
     btn:{
         width:'45%',
         height:38,
         justifyContent:'center',
         alignItems:'center',
-        borderRadius:30,
+        borderRadius:6,
         flexDirection:'row'
     },
     btnshowmore:{
@@ -204,71 +380,11 @@ const styles = StyleSheet.create({
     txtdetail:{
         fontSize:16,
         fontWeight:'500',
-        color:'#858181',
+        color:'#232323',
+    },
+    txttotal:{
+        fontSize:17,
+        fontWeight:'600',
+        marginBottom:14,
     }
 })
-
-/*const data =[
-    {   active:false,
-        Destination:"10.8774661188252#106.8087347319842",
-        OrderDate: "26/11/2020",
-        OrderId: "6361130",
-        Phone: "0373882",
-        RecieveDate: "27/11/2020",
-        UserName: "Thịnh",
-        code: "30",
-        note: "string",
-        status: "Processing",
-        data:[{
-                Content: "Phở là một món ăn truyền thống của Việt Nam, được cho là có nguồn gốc từ Nam Định, cũng có thể xem là một trong những món ăn tiêu biểu cho nền ẩm thực Việt Nam",
-                FoodId: 1,
-                FoodType: "classic",
-                ImageUrl: "http://tdtsv.ddns.net:8000/getImage/Pho1.png",
-                Price: "30000",
-                Rating: "5",
-                Title: "Phở",
-                quantity: 5,
-            },
-            {
-                Content: "Coffee cake is any cake flavored with or intended to be eaten with coffee.",
-                FoodId: 12,
-                FoodType: "Cakes",
-                ImageUrl: "http://tdtsv.ddns.net:8000/getImage/CakesCoffee Cake827.png",
-                Price: "30",
-                Rating: "3.7",
-                Title: "Coffee Cake",
-                quantity: 5,
-            }]
-    },
-    {   active:true,
-        Destination:"10.8774661188252#106.8087347319842",
-        OrderDate: "26/11/2020",
-        OrderId: "6361130",
-        Phone: "0373882",
-        RecieveDate: "27/11/2020",
-        UserName: "Trieu",
-        code: "30",
-        note: "string",
-        status: "Processing",
-        data:[{
-                Content: "Phở là một món ăn truyền thống của Việt Nam, được cho là có nguồn gốc từ Nam Định, cũng có thể xem là một trong những món ăn tiêu biểu cho nền ẩm thực Việt Nam",
-                FoodId: 1,
-                FoodType: "classic",
-                ImageUrl: "http://tdtsv.ddns.net:8000/getImage/Pho1.png",
-                Price: "30000",
-                Rating: "5",
-                Title: "Phở",
-                quantity: 5,
-            },
-            {
-                Content: "Coffee cake is any cake flavored with or intended to be eaten with coffee.",
-                FoodId: 12,
-                FoodType: "Cakes",
-                ImageUrl: "http://tdtsv.ddns.net:8000/getImage/CakesCoffee Cake827.png",
-                Price: "30",
-                Rating: "3.7",
-                Title: "Coffee Cake",
-                quantity: 5,
-            }]
-    },
-]*/

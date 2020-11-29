@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, Text,TouchableOpacity, FlatList, StatusBar, TextInput,Button} from 'react-native';
+import { View, Text,TouchableOpacity, FlatList, StatusBar, TextInput,Button,RefreshControl} from 'react-native';
 import {  Slider , Image,Input } from 'react-native-elements';
 import { ActivityIndicator } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -20,11 +20,30 @@ const Cart = () =>  {
   const [quantity,setQuantity] = React.useState(1)
   const [title,setTitle] = React.useState('');
   const [id,setId] = React.useState();
-  const [promotion,setPromotion] =React.useState('Nhập mã khuyến mãi');
+  const [promotion,setPromotion] =React.useState(0);
   const [value,setValue] = React.useState(0);
-  const [check,setCheck] = React.useState(false)
+  const [check,setCheck] = React.useState(false);
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const wait = (timeout) => {
+    return new Promise(resolve => {
+      setTimeout(resolve, timeout);
+    });
+  }
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    async function getdata(){
+      const url = 'http://tdtsv.ddns.net:8000/bag/getAllItem';
+      const res = await axios.get(url)
+      const resjson = await res.data;
+      setData(resjson);
+    }
+    getdata();
+    wait(500).then(() => setRefreshing(false));
+  },[]);
+
   React.useEffect(()=>{
-    setTimeout(() => {
       async function getdata(){
         const url = 'http://tdtsv.ddns.net:8000/bag/getAllItem';
         const res = await axios.get(url)
@@ -32,7 +51,6 @@ const Cart = () =>  {
         setData(resjson);
       }
       getdata();
-    },1000);
   })
 
   const deleteFood = async(id) => {
@@ -65,13 +83,6 @@ const Cart = () =>  {
       setValue(Number(resjson.value))
       setOpen(false);
       setCheck(false)
-    }
-  }
-  const getotalPromotion = (value) => {
-    if(value ===0){
-      return
-    }else{
-
     }
   }
   const card = ({item,index}) => {
@@ -127,7 +138,7 @@ const Cart = () =>  {
   }
     return (
       <View style={{ flex: 1}}>
-        <StatusBar barStyle='black'/>
+        <StatusBar barStyle='dark-content'/>
         <Dialog
           visible={open}
           title="Nhập Mã Khuyến Mãi"
@@ -222,7 +233,10 @@ const Cart = () =>  {
           </View>
         </View>
         <View style ={{flex:1,flexDirection:'column'}}>
-          <ScrollView style ={{flexDirection:'column',backgroundColor:'#FFF',paddingTop:10}}>
+          <ScrollView 
+          style ={{flexDirection:'column',backgroundColor:'#FFF',paddingTop:10}}
+          refreshControl = {<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+          >
             <FlatList 
             data = {data}
             renderItem = {card}
@@ -240,7 +254,7 @@ const Cart = () =>  {
             onPress = {() => setOpen(true)}
             style ={{alignItems:'flex-end',justifyContent:'center'}}>
               <View style ={{flexDirection:'row',marginRight:8}}>
-                <Text style ={{color:'#A3A3A3',fontSize:13}}>{promotion} </Text>
+                <Text style ={{color:'#A3A3A3',fontSize:13}}>Nhập mã khuyến mãi</Text>
 
                 <AntDesign name="right" size={16} color="#A3A3A3" style={{marginTop:1}}/>
               </View>
@@ -249,7 +263,7 @@ const Cart = () =>  {
           <View style ={{height:53,width:'100%',backgroundColor:'white',borderTopWidth:0.6,borderColor:'#F0F0F0'}}>
             <View style ={{flexDirection:'row-reverse',height:'100%'}}>
               <TouchableOpacity
-              onPress = {()=> navigation.navigate('Info',{data,value})}
+              onPress = {()=> navigation.navigate('Info',{data,value,promotion})}
               style ={{width:100,backgroundColor:'#FE6B47',justifyContent:'center'}}
               >
                 <View style ={{alignItems:'center'}}>
@@ -260,17 +274,16 @@ const Cart = () =>  {
                 <View style ={{flexDirection:'row'}}>
                   <View style ={{flexDirection:'column'}}>
                     <Text style ={{fontSize:16,fontWeight:'500'}}>Tổng Tiền: </Text>
-                    <Text style ={{fontSize:14,fontWeight:'500',marginLeft:18}}>Đã Giảm: </Text>
+                    <Text style ={{fontSize:12,fontWeight:'500',marginLeft:18}}>Đã Giảm: </Text>
                   </View>
                   <View>
                     <View style ={{flexDirection:'row'}}>
                       <Text style ={{textDecorationLine:'underline',color:'#FE6B47',fontWeight:'700',marginHorizontal:1}}>đ</Text>
                       <Text style ={{color:'#FE6B47',fontWeight:'700'}}>{Number(total-(value/100*total))}</Text>
                     </View>
-                    <View style ={{flexDirection:'row'}}>
-                      <Text style ={{textDecorationLine:'underline',color:'#FE6B47',fontWeight:'700',marginHorizontal:1}}>đ</Text>
-                      <Text style ={{color:'#FE6B47',fontWeight:'700'}}>{Number((value/100*total))}</Text>
-                      <Text style ={{color:'#FE6B47',fontWeight:'400',fontSize:10}}>{'('+value+'%)'}</Text>
+                    <View style ={{flexDirection:'row',marginTop:4}}>
+                      <Text style ={{textDecorationLine:'underline',color:'#FE6B47',fontWeight:'700',marginHorizontal:1,fontSize:12}}>đ</Text>
+                      <Text style ={{color:'#FE6B47',fontWeight:'700',fontSize:12}}>{Number((value/100*total))}</Text>
                     </View>
                   </View>
                 </View>

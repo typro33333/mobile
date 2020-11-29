@@ -5,6 +5,7 @@ import Product_placed from './product_placed';
 import New_product from './new_product';
 import ManagePost from './managepost';
 import Promotion from './promotion';
+import History from './history';
 const Stack = createStackNavigator();
 
 const CreateHomeChild = () => {
@@ -16,7 +17,7 @@ return(
         name = "Profile" 
         component = {Profile}
         options ={{
-            title:"Profile",
+            title:"Setting",
             headerStyle :{
                 elevation: 0,
                 shadowOpacity: 0,
@@ -47,6 +48,12 @@ return(
         name = "Promotion" 
         component = {Promotion}
         />
+
+        <Stack.Screen 
+        name = "History" 
+        component = {History}
+        />
+
     </Stack.Navigator>  
     )
 }

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {View,Text,StyleSheet, Image,AsyncStorage, Button } from 'react-native';
+import {View,Text,StyleSheet, Image,AsyncStorage, Button ,StatusBar} from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons,AntDesign } from '@expo/vector-icons';
@@ -46,10 +46,21 @@ export default function Profile(){
     }
 
     React.useEffect(()=>{
+        navigation.setOptions({
+            title:<View style = {{flexDirection:'row'}}>
+                <Image 
+                source = {require('../../../assets/setting.png')}
+                resizeMode ="cover"
+                style ={{height:17,width:17,marginTop:3}}
+                />
+                <Text style= {{fontSize:18,fontWeight:'700',color:"#5C5B5A",marginLeft:4}}> Setting</Text>
+            </View>
+        })
         getData()
-    },[])
+    },[navigation])
     return(
         <View style = {styles.container}>
+            <StatusBar backgroundColor="blue" barStyle="dark-content"/> 
             {check?
             <View></View>
             :
@@ -104,7 +115,7 @@ export default function Profile(){
                     </View>
                 </View>
             </View>
-            <View style ={{flexDirection:'column',backgroundColor:'#FFF',marginTop:4}}>
+            <View style ={{flexDirection:'column',backgroundColor:'#FFF',marginTop:8}}>
                 <TouchableOpacity 
                 onPress = {()=>navigation.navigate('New Product')}
                 style ={{borderBottomWidth:0.5,borderColor:'#B6B6B6'}}>
@@ -162,7 +173,7 @@ export default function Profile(){
                     </View>
                 </TouchableOpacity>
                 <TouchableOpacity 
-                onPress = {()=>navigation.navigate('Product_is_placed')}
+                onPress = {()=>navigation.navigate('History')}
                 style ={{borderBottomWidth:0.5,borderColor:'#B6B6B6'}}>
                     <View
                     style ={{margin:14,flexDirection:'row',justifyContent:'space-between'}}>

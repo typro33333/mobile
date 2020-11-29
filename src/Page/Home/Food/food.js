@@ -38,19 +38,20 @@ const Food = () =>  {
 
   useEffect(()=>{
     LogBox.ignoreAllLogs();
-    navigation.setOptions({
-      headerRight: () => (
-        <View style ={{marginLeft:10}}>
-            <Icon.Button 
-            name="ios-search"
-            size = {25}
-            color="#333"
-            backgroundColor="#fff"
-            onPress={()=>navigation.navigate('SearchFood')}
-            />
-        </View>
-    ),
-  })},[navigation])
+      navigation.setOptions({
+        headerRight: () => (
+          <View style ={{marginLeft:10}}>
+              <Icon.Button 
+              name="ios-search"
+              size = {25}
+              color="#333"
+              backgroundColor="#fff"
+              onPress={()=>navigation.navigate('SearchFood')}
+              />
+          </View>
+      ),
+    })
+  },[navigation])
   
   React.useEffect(()=>{
     async function getdata(){
@@ -110,7 +111,7 @@ const Food = () =>  {
 
     return (
     <View style ={{flex:1,backgroundColor:'#FFF'}}>
-    <StatusBar barStyle='black-content'/>
+    <StatusBar barStyle='dark-content'/>
     <ScrollView 
     style={styles.container}
     refreshControl = {<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}

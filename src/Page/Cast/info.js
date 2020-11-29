@@ -7,23 +7,29 @@ import { ActivityIndicator } from 'react-native';
 import { Input } from 'react-native-elements';
 import { AntDesign,MaterialCommunityIcons,FontAwesome } from '@expo/vector-icons';
 import { SimpleLineIcons } from '@expo/vector-icons';
-
+import { Dialog } from 'react-native-simple-dialogs';
+import { set } from 'react-native-reanimated';
 
 export default function Info() {
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const route = useRoute();
-  const code = route.params.value
+  const code = route.params.promotion;
   const navigation = useNavigation();
   const date = new Date();
   const datenow = (date.getDate()+"/"+(Number(date.getMonth())+1))+"/"+ date.getFullYear();
   const [loading,setLoading] = useState(true)
-  const [UserName,setUserName] = useState();
-  const [Phone,setPhone] =useState();
-  const [RecieveDate,setRecieveDate] =useState();
-  const [Destination,setDestination] = useState();
-  const [note,setNote] =useState();
+  const [UserName,setUserName] = useState('');
+  const [Phone,setPhone] =useState('');
+  const [RecieveDate,setRecieveDate] =useState('');
+  const [Destination,setDestination] = useState('');
+  const [note,setNote] =useState('');
+  const [hide,setHide] = useState(true);
+  const [open,setOpen] = useState(false);
+  const [res,setRes] = useState(false)
   const purchase = async()  => {
+    setOpen(true);
+    setRes(true);
     const url = 'http://tdtsv.ddns.net:8000/bag/purchase';
     const data = {
       data:route.params.data,
@@ -35,12 +41,14 @@ export default function Info() {
       Destination: Destination,
       note:note
     }
-    console.log(data)
     const res = await fetch(url,{
       method:'POST',
       body:JSON.stringify(data)
+    }).then(res =>{
+      if(res.status === 200){
+        setRes(false);
+      }
     })
-    console.log(res.status);
   }
 
   useEffect(() => {
@@ -78,9 +86,44 @@ export default function Info() {
     }
   }
 
+  const check = () => {
+    if(UserName === undefined){
+      return setHide(true);
+    }
+    else if(Phone.length<=9){
+      console.log(true)
+      return setHide(true)
+    }
+    else{
+      return setHide(false)
+    }
+  }
+
   return (
     <View style={[styles.container,{backgroundColor:"#FFF"}]}>
       <StatusBar/>
+      <Dialog
+            visible={open}
+            title="Xác nhận đặt hàng"
+            onTouchOutside={() => setOpen(false)} 
+            buttons = {
+            <View style={{flexDirection:'row',justifyContent:'flex-end'}}>
+                <View style ={{margin:14}}>
+                    <Button title ="Đóng" onPress ={() =>{setOpen(false)}}/>
+                </View>
+            </View>} 
+            >
+            {res?
+            <View style ={{justifyContent:'center',alignSelf:'center'}}>
+              <ActivityIndicator />
+              <Text>Please waitting...</Text>
+            </View>
+            :
+            <View style ={{alignSelf:'center',marginTop:10}}>
+                <Text>Đặt hàng thành công!!</Text>
+            </View>
+            }
+      </Dialog>
       <KeyboardAvoidingView
       behavior={Platform.OS == "ios" ? "padding" : "height"}
       keyboardVerticalOffset = {Platform.OS === 'ios' ? 100 : 0}
@@ -114,13 +157,13 @@ export default function Info() {
         </View>}
         <View style ={{width:"90%",alignSelf:'center',marginTop:20,backgroundColor:'#FFF'}}>
         <Input
-        onChangeText ={(text)=>setUserName(text)}
+          onChangeText={value => {setUserName(value);check()}}
           label = 'Your Name'
           placeholder='Nguyễn Văn A'
           leftIcon ={<AntDesign name="idcard" size={24} color="black" />}
         />
         <Input
-        onChangeText ={(text)=>setPhone(text)}
+          onChangeText ={(text)=>{setPhone(text);check()}}
           label = 'Phone'
           placeholder='0988844440'
           leftIcon ={<MaterialCommunityIcons name="cellphone" size={24} color="black" />}
@@ -143,14 +186,27 @@ export default function Info() {
             leftIcon = {<SimpleLineIcons name="note" size={24} color="black" />}
           />
         </View>
+        {hide?
+        <View style ={{width:"90%",alignSelf:'center',marginTop:10,backgroundColor:'#928F8F',marginBottom:30,borderRadius:100}}>
+          <View style ={{justifyContent:'center',flexDirection:'row'}}>
+            <AntDesign name="shoppingcart" size={24} color="#FFF" style={{marginTop:5,marginBottom:5}}/>
+            <View style={{marginLeft:6,marginTop:6}}>
+              <Text style={{fontSize:16,color:'#FFF'}}>Xác Nhận Đặt Hàng</Text>
+            </View>
+          </View>
+        </View>
+        :
         <View style ={{width:"90%",alignSelf:'center',marginTop:10,backgroundColor:'#008FD4',marginBottom:30,borderRadius:100}}>
           <View style ={{justifyContent:'center',flexDirection:'row'}}>
             <AntDesign name="shoppingcart" size={24} color="#FFF" style={{marginTop:5,marginBottom:5}}/>
-            <TouchableOpacity style={{marginLeft:6,marginTop:6}}>
+            <TouchableOpacity 
+            onPress ={()=>{purchase()}}
+            style={{marginLeft:6,marginTop:6}}>
               <Text style={{fontSize:16,color:'#FFF'}}>Xác Nhận Đặt Hàng</Text>
             </TouchableOpacity>
           </View>
         </View>
+        }
       </ScrollView>
       </KeyboardAvoidingView>
     </View>

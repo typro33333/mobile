@@ -4,7 +4,7 @@ import Food from './Food/food';
 import ListFood from './Food/listfood';
 import Detail from './detail';
 import Order from './order';
-import {Text, View} from 'react-native';
+import {Text, View,Image} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import FoodSearch from './Food/searchfood';
 import { useNavigation } from '@react-navigation/native';
@@ -28,17 +28,14 @@ return(
         name = "Food" 
         component = {Food}
         options ={{
-            title:'Over View',
-            headerRight: () => (
-                <View style ={{marginLeft:10}}>
-                    <Icon.Button 
-                    name="ios-search"
-                    size = {25}
-                    color="#333"
-                    backgroundColor="#fff"
-                    />
-                </View>
-            ),
+            title:<View style ={{flexDirection:'row'}}>
+                <Image 
+                source ={require('../../../assets/home.png')}
+                style ={{height:19,width:19,marginTop:2}}
+                resizeMode="cover"
+                />
+                <Text style ={{fontSize:18,fontWeight:'700',marginLeft:6,color:'#5C5B5A'}}>Home</Text>
+            </View>,
             animationEnabled:true
         }}
         />

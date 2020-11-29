@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {Image, View, Platform,Text, ScrollView ,KeyboardAvoidingView,ImageBackground} from 'react-native';
+import {Image, View, Platform,Text, ScrollView ,KeyboardAvoidingView,ImageBackground,StatusBar} from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { TouchableOpacity } from 'react-native';
 import axios from 'axios';
@@ -8,7 +8,9 @@ import { AntDesign,MaterialCommunityIcons,FontAwesome } from '@expo/vector-icons
 import { Entypo } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
+import {useNavigation} from '@react-navigation/native';
 export default function ImagePickerExample() {
+  const navigation = useNavigation();
   const [plholder,setPlhoder] = useState();
   const [image, setImage] = useState(null);
   const [base64,setBase64] = useState();
@@ -43,9 +45,7 @@ export default function ImagePickerExample() {
       method:'POST',
       body:JSON.stringify(data)
     })
-    console.log(res.status);
   }
-  console.log(content)
   useEffect(() => {
     (async () => {
       if (Platform.OS !== 'web') {
@@ -56,6 +56,17 @@ export default function ImagePickerExample() {
       }
     })();
   },[]);
+
+  React.useEffect(()=> {
+    navigation.setOptions({
+        headerLeft:()=>(
+            <TouchableOpacity style = {{flex:1,flexDirection:'row'}} onPress = {()=> {navigation.goBack()}}>
+                <Text style={{color:"#267EF9",marginLeft:20,marginTop:8,fontSize:18}}>Back</Text>
+            </TouchableOpacity>
+        ),
+    })
+  },[navigation]);
+
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -134,6 +145,7 @@ export default function ImagePickerExample() {
 
   return (
     <View style={{ flex:1,backgroundColor:'#FFF'}}>
+      <StatusBar barStyle='dark-content'/>
       <KeyboardAvoidingView
       behavior={Platform.OS == "ios" ? "padding" : "height"}
       keyboardVerticalOffset = {Platform.OS === 'ios' ? 100 : 0}
@@ -166,7 +178,15 @@ export default function ImagePickerExample() {
         />
       </View>}
       </TouchableOpacity>
-      <View style ={{marginTop:10}}>
+      <View style ={{marginTop:20}}>
+        <Input
+          onChangeText = {(text)=>setTitle(text)}
+          label = 'Title'
+          placeholder='123456...'
+          leftIcon ={<MaterialCommunityIcons name="format-title" size={24} color="black" />}
+        />
+      </View>
+      <View style ={{marginTop:8}}>
         <View style ={{flexDirection:'column'}}>
           <View style ={{flexDirection:'row',alignSelf:'center',marginBottom:15}}>
             <MaterialCommunityIcons name="food" size={22} color="black" />
@@ -256,6 +276,14 @@ export default function ImagePickerExample() {
           </View>
         </View>
       </View>
+      <View style ={{marginTop:20}}>
+        <Input
+          onChangeText = {(text)=>setPrice(text)}
+          label = 'Price'
+          placeholder='1234567890...'
+          leftIcon ={<MaterialCommunityIcons name="cash-usd" size={24} color="black" />}
+        />
+      </View>
       <View style ={{marginTop:10,flexDirection:'column'}}>
         <View style ={{justifyContent:'center',alignItems:'center',flexDirection:'row'}}>
           <MaterialCommunityIcons name="google-analytics" size={20} color="black"/>
@@ -276,29 +304,13 @@ export default function ImagePickerExample() {
       </View>
       <View style ={{marginTop:20}}>
         <Input
-          onChangeText = {(text)=>setTitle(text)}
-          label = 'Title'
-          placeholder='123456...'
-          leftIcon ={<MaterialCommunityIcons name="format-title" size={24} color="black" />}
-        />
-      </View>
-      <View>
-        <Input
-          onChangeText = {(text)=>setPrice(text)}
-          label = 'Price'
-          placeholder='1234567890...'
-          leftIcon ={<MaterialCommunityIcons name="cash-usd" size={24} color="black" />}
-        />
-      </View>
-      <View>
-        <Input
           onChangeText = {(text)=>setTag(text)}
           label = '#Tag'
           placeholder='#food,sugar,...'
           leftIcon ={<AntDesign name="tago" size={24} color="black" />}
         />
       </View>
-      <View>
+      <View style ={{marginTop:10}}>
         <Input
           onChangeText = {(text)=>setContent(text)}
           label = 'Content'
