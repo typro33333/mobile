@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {Image, View, Platform,Text, ScrollView ,KeyboardAvoidingView,ImageBackground,StatusBar} from 'react-native';
+import {Image, View, Platform,Text, ScrollView ,KeyboardAvoidingView,ImageBackground,StatusBar,Button,ActivityIndicator} from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { TouchableOpacity } from 'react-native';
 import axios from 'axios';
@@ -9,6 +9,8 @@ import { Entypo } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
 import {useNavigation} from '@react-navigation/native';
+import { Dialog } from 'react-native-simple-dialogs';
+import { FlatList } from 'react-native-gesture-handler';
 export default function ImagePickerExample() {
   const navigation = useNavigation();
   const [plholder,setPlhoder] = useState();
@@ -21,6 +23,9 @@ export default function ImagePickerExample() {
   const [price,setPrice]=useState();
   const [title,setTitle] =useState()
   const [tag,setTag] = useState();
+  const [open,setOpen] = React.useState(false);
+  const [loading,setLoading] = useState(false)
+  const [error,setError] = React.useState(false);
   const [type,setType] =useState([
     {id:1,active:false},
     {id:2,active:false},
@@ -30,6 +35,8 @@ export default function ImagePickerExample() {
     {id:6,active:false}
   ]);
   const Uploadfile = async(base64,typefood,rating,price,title,tag,content)  => {
+    setOpen(true)
+    setLoading(true);
     const url = 'http://tdtsv.ddns.net:8000/food/addNewFood';
     const stringdata = ("data:image/png;base64,"+base64);
     const data = {
@@ -44,6 +51,15 @@ export default function ImagePickerExample() {
     const res = await fetch(url,{
       method:'POST',
       body:JSON.stringify(data)
+    }).then(res => {
+      console.log(res.status)
+      if(res.status === 200){
+        setLoading(false)
+        setOpen(true);
+      }
+      else if(res.status === 422){
+
+      }
     })
   }
   useEffect(() => {
@@ -143,9 +159,39 @@ export default function ImagePickerExample() {
     )
   }
 
+  const loadingbtn = (loading) => {
+    console.log(loading)
+    if(loading === true){
+      return 
+    }else if(loading === false){
+      <View style={{flexDirection:'row',justifyContent:'flex-end'}}>
+            <View style ={{margin:14}}>
+                <Button title ="Done" onPress ={() =>{setOpen(false);navigation.navigate('Profile')}}/>
+            </View>
+        </View>
+    }
+  }
+
   return (
     <View style={{ flex:1,backgroundColor:'#FFF'}}>
       <StatusBar barStyle='dark-content'/>
+      <Dialog
+        visible={open}
+        title="Comfirm"
+        onTouchOutside={() => setOpen(false)} 
+        buttons = {loading? <View></View>:<View style={{flexDirection:'row',justifyContent:'flex-end'}}>
+        <View style ={{margin:14}}>
+            <Button title ="Done" onPress ={() =>{setOpen(false);navigation.navigate('Profile')}}/>
+        </View>
+      </View>}
+        >   
+          {loading? <ActivityIndicator/>:<View style ={{alignSelf:'center'}}>
+                <View style= {{flexDirection:'row'}}>
+                    <Text style ={{marginLeft:4}}>Add new product complete!!</Text>
+                </View>
+            </View>}
+            
+      </Dialog>
       <KeyboardAvoidingView
       behavior={Platform.OS == "ios" ? "padding" : "height"}
       keyboardVerticalOffset = {Platform.OS === 'ios' ? 100 : 0}
