@@ -90,7 +90,7 @@ export default function Info() {
     if(UserName === undefined){
       return setHide(true);
     }
-    else if(Phone.length<=9){
+    else if(Phone.length<9){
       console.log(true)
       return setHide(true)
     }
@@ -109,7 +109,7 @@ export default function Info() {
             buttons = {
             <View style={{flexDirection:'row',justifyContent:'flex-end'}}>
                 <View style ={{margin:14}}>
-                    <Button title ="Đóng" onPress ={() =>{setOpen(false)}}/>
+                    <Button title ="Đóng" onPress ={() =>{setOpen(false),navigation.navigate('Cast')}}/>
                 </View>
             </View>} 
             >

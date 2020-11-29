@@ -3,7 +3,6 @@ import {View,Text,StyleSheet, ScrollView, Image, FlatList,TouchableOpacity,Butto
 import axios from 'axios';
 import {useNavigation} from '@react-navigation/native';
 import { Dialog } from 'react-native-simple-dialogs';
-import Clipboard from '@react-native-community/clipboard';
 
 export default function Product_place(){
     const [data,setData] = React.useState([]);

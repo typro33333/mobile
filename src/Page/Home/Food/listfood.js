@@ -33,6 +33,7 @@ const ListFood = () => {
         })
     },[navigation]);
 
+    
     React.useEffect(()=> {
         async function getdata(){
             const url = 'http://tdtsv.ddns.net:8000/food/getFood'+stylefood;
