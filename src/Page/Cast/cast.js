@@ -51,7 +51,7 @@ const Cart = () =>  {
         setData(resjson);
       }
       getdata();
-  },[])
+  })
 
   const deleteFood = async(id) => {
     const url = 'http://tdtsv.ddns.net:8000/bag/addItem'+id+'-0';

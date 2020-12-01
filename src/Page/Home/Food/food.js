@@ -61,7 +61,7 @@ const Food = () =>  {
         setData(resjson);
     }
     getdata();
-  },[])
+  })
 
   const Card = ({item,index}) => {
     return(
