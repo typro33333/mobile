@@ -18,12 +18,16 @@ export default function Product_place(){
         navigation.setOptions({
             headerRight:()=>(
                 <TouchableOpacity style = {{flex:1,flexDirection:'row'}} onPress = {()=> {setOpen(true)}}>
-                    <Text style={{color:"#267EF9",marginRight:20,marginTop:10,fontSize:18}}>Add</Text>
+                    <View style ={{justifyContent:'center'}}>
+                        <Text style={{color:"#267EF9",marginRight:20,marginTop:10,fontSize:18}}>Add</Text>
+                    </View>
                 </TouchableOpacity>
             ),
             headerLeft:()=>(
                 <TouchableOpacity style = {{flex:1,flexDirection:'row'}} onPress = {()=> {navigation.goBack()}}>
-                    <Text style={{color:"#267EF9",marginLeft:20,marginTop:10,fontSize:18}}>Back</Text>
+                    <View style ={{justifyContent:'center'}}>
+                        <Text style={{color:"#267EF9",marginLeft:10,fontSize:18}}>Back</Text>
+                    </View>
                 </TouchableOpacity>
             ),
             title:'Your Promotion'

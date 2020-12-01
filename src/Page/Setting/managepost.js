@@ -31,7 +31,9 @@ export default function Product_place(){
     const [ratingfood,setRatingfood] = React.useState();
     const [content,setContent] = React.useState();
     const [price,setPrice]=React.useState();
-    const [title,setTitle] =React.useState()
+    const [title,setTitle] =React.useState();
+    const [hide,setHide] = React.useState(false);
+    const [hidebtn,setHidebtn]= React.useState(false);
     const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
           mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -50,7 +52,9 @@ export default function Product_place(){
         navigation.setOptions({
             headerLeft:()=>(
                 <TouchableOpacity style = {{flex:1,flexDirection:'row'}} onPress = {()=> {navigation.goBack()}}>
-                    <Text style={{color:"#267EF9",marginLeft:20,marginTop:8,fontSize:18}}>Back</Text>
+                    <View style ={{justifyContent:'center'}}>
+                        <Text style={{color:"#267EF9",marginLeft:10,fontSize:18}}>Back</Text>
+                    </View>
                 </TouchableOpacity>
             ),
         })
@@ -61,11 +65,14 @@ export default function Product_place(){
     },[])
 
     const editfood = async() => {
+        setLoading(true);
+        setHide(true);
+        setHidebtn(true)
         let image = '';
         if(base64 === null){
             image = dtaEdit.ImageUrl
         }else{
-            image = base64
+            image = ("data:image/png;base64,"+base64);
         }
         const data ={
             FoodId:dtaEdit.FoodId,
@@ -81,9 +88,16 @@ export default function Product_place(){
             method:'POST',
             body:JSON.stringify(data)
         }).then(res => {
-            console.log(res.status)
             if(res.status === 200){
-                console.log(oke)
+                getdata();
+                setComplete(true);
+                setLoading(false);
+                setTimeout(()=>{
+                    setOpen(false);
+                    setComplete(false);
+                    setHide(false);
+                    setHidebtn(false)
+                },2000);
             }
         })
     }
@@ -285,7 +299,7 @@ export default function Product_place(){
         if(loading === true){
             return(
                 <View style ={{marginTop:30,marginBottom:30}}>
-                        <ActivityIndicator/>
+                        <ActivityIndicator size="small" color="#0000ff"/>
                 </View>
             )
         }else{
@@ -306,22 +320,54 @@ export default function Product_place(){
         })();
     },[]);
 
-    return(
-        <View style = {styles.container}>
-            <Dialog
-                visible={open}
-                title="Comfirm"
-                onTouchOutside={() => setOpen(false)} 
-                buttons = {<View style={{flexDirection:'row',justifyContent:'space-between'}}>
+    const hdbtn = (hidebtn)=> {
+        if(hidebtn === false){
+            return(
+            <View style={{flexDirection:'row',justifyContent:'space-between'}}>
                 <View style ={{margin:14}}>
                     <Button title ="Hủy" onPress ={() =>{setOpen(false)}}/>
                 </View>
                 <View style ={{margin:14}}>
                     <Button title ="Thay Đổi" onPress ={() =>{editfood()}}/>
                 </View>
-            </View>}
+            </View>
+            )
+        }else{
+            <View></View>
+        }
+    }
+
+    return(
+        <View style = {styles.container}>
+            <Dialog
+                visible={open}
+                title="Comfirm"
+                onTouchOutside={() => setOpen(false)} 
+                buttons = {hdbtn(hidebtn)}
                 >
+                
                 <View>
+                
+                {comple?
+                <View style ={{alignItems:'center',marginTop:30,marginBottom:30,justifyContent:'center'}}>
+                    <View style ={{alignSelf:'center',justifyContent:'center'}}>
+                        <Text style ={{color:"#5BB800"}}>Edit complete!! Waitting...(2s)</Text>
+                    </View>
+                </View>
+                :
+                <View>
+                    
+                </View>
+                }
+                {loading?
+                <ActivityIndicator size="small" color="#0000ff" />
+                :
+                <View></View>
+                }
+
+                {hide?
+                <View></View>
+                :
                 <KeyboardAvoidingView
                 behavior={Platform.OS == "ios" ? "padding" : "height"}
                 keyboardVerticalOffset = {Platform.OS === 'ios' ? 100 : 20}
@@ -386,12 +432,13 @@ export default function Product_place(){
                         leftIcon ={<FontAwesome5 name="edit" size={24} color="black" />}
                         />
                     </View>
-                    <View style={{marginTop:70}}>
+                    <View style={{marginTop:110}}>
 
                     </View>
                 </View>
                 </ScrollView>
-                </KeyboardAvoidingView> 
+                </KeyboardAvoidingView>
+                }
                 </View>
             </Dialog>
             <Dialog

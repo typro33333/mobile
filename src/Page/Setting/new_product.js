@@ -77,7 +77,9 @@ export default function ImagePickerExample() {
     navigation.setOptions({
         headerLeft:()=>(
             <TouchableOpacity style = {{flex:1,flexDirection:'row'}} onPress = {()=> {navigation.goBack()}}>
-                <Text style={{color:"#267EF9",marginLeft:20,marginTop:8,fontSize:18}}>Back</Text>
+                <View style ={{justifyContent:'center'}}>
+                        <Text style={{color:"#267EF9",marginLeft:10,fontSize:18}}>Back</Text>
+                    </View>
             </TouchableOpacity>
         ),
     })
@@ -185,7 +187,7 @@ export default function ImagePickerExample() {
         </View>
       </View>}
         >   
-          {loading? <ActivityIndicator/>:<View style ={{alignSelf:'center'}}>
+          {loading? <ActivityIndicator size="small" color="#0000ff"/>:<View style ={{alignSelf:'center'}}>
                 <View style= {{flexDirection:'row'}}>
                     <Text style ={{marginLeft:4}}>Add new product complete!!</Text>
                 </View>
