@@ -91,6 +91,7 @@ const SearchScreen = () => {
                 <TouchableOpacity 
                 key ={index}
                 style = {{flexDirection:'row',width:"100%"}}
+                onPress ={() =>{navigation.navigate('Detail',{item})}}
                 >
                     <Image 
                     source = {{uri:item.ImageUrl}}
