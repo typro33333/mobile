@@ -324,9 +324,9 @@ export default function Product_place(){
                 <View>
                 <KeyboardAvoidingView
                 behavior={Platform.OS == "ios" ? "padding" : "height"}
-                keyboardVerticalOffset = {Platform.OS === 'ios' ? 100 : 0}
+                keyboardVerticalOffset = {Platform.OS === 'ios' ? 100 : 20}
                 >
-                <ScrollView style ={{height:550}}>
+                <ScrollView style ={{height:400}}>
                 <View style ={{alignSelf:'center',width:'100%'}}>
                     <TouchableOpacity 
                     onPress ={pickImage}
@@ -385,6 +385,9 @@ export default function Product_place(){
                         placeholder={dtaEdit.Content}
                         leftIcon ={<FontAwesome5 name="edit" size={24} color="black" />}
                         />
+                    </View>
+                    <View style={{marginTop:70}}>
+
                     </View>
                 </View>
                 </ScrollView>
